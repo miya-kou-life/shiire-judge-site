@@ -1,0 +1,50 @@
+<!doctype html><html lang='ja'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><meta name='robots' content='noindex,nofollow'><title>仕入ジャッジAI レポート SAMPLE-001</title><style>
+:root{--ink:#16202b;--muted:#5b6b7c;--line:#dfe5ec;--bg:#fff;--accent:#0f5c8c;
+--s:#0a7a49;--a:#0f5c8c;--b:#8a6a00;--c:#6b6b6b;--d:#9a2f2f;}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",
+"Yu Gothic",Meiryo,sans-serif;color:var(--ink);background:#eef1f5;line-height:1.7;
+font-size:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{max-width:900px;margin:24px auto;background:var(--bg);padding:40px 44px;
+box-shadow:0 1px 4px rgba(0,0,0,.08)}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:.02em}
+h2{font-size:16px;margin:32px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+h3{font-size:14px;margin:20px 0 8px;color:var(--accent)}
+.meta{color:var(--muted);font-size:12.5px;margin-bottom:24px}
+.badges{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0 8px}
+.grade{display:inline-flex;align-items:baseline;gap:8px;padding:8px 16px;border-radius:4px;
+color:#fff;font-weight:700}
+.grade .letter{font-size:26px;line-height:1}
+.grade .desc{font-size:12.5px;font-weight:400}
+.grade-s{background:var(--s)}.grade-a{background:var(--a)}.grade-b{background:var(--b)}
+.grade-c{background:var(--c)}.grade-d{background:var(--d)}
+.conf{padding:6px 12px;border-radius:4px;font-size:12.5px;border:1px solid var(--line)}
+.conf-high{background:#e8f5ee;border-color:#9ed4b6}
+.conf-mid{background:#fff6e0;border-color:#e2c67a}
+.conf-low{background:#fdecec;border-color:#e8a9a9}
+.conf-none{background:#f0f2f5}
+table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{width:38%;font-weight:600;background:#f7f9fb;color:var(--muted)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.na{color:#9aa7b4}
+ul,ol{margin:6px 0 6px;padding-left:22px}
+li{margin:4px 0}
+.box{border:1px solid var(--line);border-left:4px solid var(--accent);
+background:#f7f9fb;padding:12px 16px;margin:12px 0;font-size:13.5px}
+.box.warn{border-left-color:var(--d);background:#fdf4f4}
+.box.ok{border-left-color:var(--s);background:#f3faf6}
+.tag{display:inline-block;background:#eef2f6;border:1px solid var(--line);border-radius:3px;
+padding:1px 8px;font-size:12px;margin:2px 4px 2px 0}
+.q{counter-reset:qq;padding-left:0;list-style:none}
+.q li{counter-increment:qq;padding-left:30px;position:relative;margin:10px 0}
+.q li::before{content:"Q" counter(qq);position:absolute;left:0;top:0;font-weight:700;
+color:var(--accent);font-size:12.5px}
+.foot{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
+font-size:11.5px;color:var(--muted)}
+.deal{margin-top:40px;padding-top:8px}
+.deal + .deal{border-top:3px double var(--line);padding-top:28px}
+@media print{body{background:#fff}.sheet{box-shadow:none;margin:0;max-width:none;padding:0}
+.deal{page-break-inside:avoid}h2{page-break-after:avoid}}
+@media (max-width:640px){.sheet{padding:20px 16px;margin:0}th{width:auto}}
+</style></head><body><div class='sheet'><h1>仕入ジャッジAI｜仕入判断レポート</h1><div class='meta'>サンプル住宅販売株式会社（架空） 御中／注文番号 SAMPLE-001／作成 2026-08-05 10:00／発行 株式会社ライフサポート</div><div class='box warn'><strong>これはサンプルレポートです。</strong><br>掲載している物件データ・会社名はすべて架空のものであり、実在しません。実際の成約事例や当社の取引実績を示すものでもありません。納品時の書式・項目・計算方法をご確認いただくための見本です。</div><div class='box'>対象 1件の一次判定を行いました（S 1件）。金額はすべて、お申込み時にご指定いただいた御社の仕入基準（必要粗利率・LTV・金利・保有期間・出口単価）で計算しています。</div><div class='deal'><h2>案件 1｜サンプル県サンプル市中央三丁目1番5号</h2><h3>案件概要</h3><table><tr><th>種目</th><td>戸建</td></tr><tr><th>取引態様</th><td>専任</td></tr><tr><th>土地面積</th><td>132.50㎡</td></tr><tr><th>建物面積</th><td>98.40㎡</td></tr><tr><th>物件番号</th><td>SMP-001</td></tr><tr><th>滞留日数</th><td>274</td></tr><tr><th>価格改定</th><td>0回</td></tr></table><div class='badges'><span class='grade grade-s'><span class='letter'>S</span><span class='desc'>公開価格でも即買付可能</span></span><span class='conf conf-mid'>判定の確信度: <strong>中</strong></span></div><h3>金額（御社の仕入基準で計算）</h3><table><tr><th>公開価格</th><td class='num'>27,800,000円</td></tr><tr><th>保守出口</th><td class='num'>37,782,900円</td></tr><tr><th>標準出口</th><td class='num'>41,981,000円</td></tr><tr><th>強気出口</th><td class='num'>46,179,100円</td></tr><tr><th>想定総経費</th><td class='num'>3,958,573円</td></tr><tr><th>公開価格での粗利</th><td class='num'>10,222,427円</td></tr><tr><th>買える仕入上限</th><td class='num'><strong>31,437,884円</strong></td></tr><tr><th>必要指値額</th><td class='num'>0円</td></tr><tr><th>必要指値率</th><td class='num'>0.0%</td></tr><tr><th>必要自己資金</th><td class='num'>9,072,170円</td></tr><tr><th>年率自己資金効率</th><td class='num'>78.1%</td></tr><tr><th>想定総工数</th><td class='num'>16.0時間</td></tr></table><p class='meta'>出口価格の根拠: 土地 132.5㎡ × 250,000円/㎡ + 建物 98.4㎡ × 90,000円/㎡</p><h3>指値が成立する可能性を示す材料</h3><ul><li>滞留274日</li><li>売主事情を示す記載: 相続、早期、空家</li><li>権利・法令上の論点があり価格調整の根拠になる</li></ul><h3>問題点</h3><ul><li>権利・法令: 境界未確定</li><li>売主事情（可能性）: 相続、早期、空家、遠方</li></ul><h3>価値を上げられる要素</h3><div class='box'><strong>境界確定・越境の解消</strong><span class='tag'>境界未確定</span><br>確定測量を実施し、越境物については覚書を締結して引渡条件を明確にする<br><small>前提: 隣地所有者の立会い同意、測量士の手配<br>未確認: 越境物の内容と所有者、確定測量に要する期間</small></div><h3>致命的リスク・要確認リスク</h3><div class='box'><strong>[要確認] 境界未確定</strong><br>取得価格・出口・期間のいずれかに影響します。可否の判断には現地・役所調査が必要です。</div><h3>仲介会社への確認質問</h3><ol class='q'><li>備考に「境界未確定」とありますが、具体的な内容と解消の見通し（同意書・承諾書・境界確定の有無、費用負担）を教えてください。</li><li>滞留274日の状況ですが、売主様の売却期限・現在の反響状況・価格見直しの余地について、現時点の温度感を教えてください。</li><li>売却のご事情（時期の制約、残債・決済の希望時期）について、差し支えない範囲で教えてください。条件を合わせられる可能性があります。</li></ol><h3>推奨アクション</h3><div class='box ok'><strong>本日中に架電し、買付の可否と先着状況を確認する。</strong><br><small>判定理由: 公開価格が仕入上限以下（公開価格のままで基準を満たす）</small></div><h3>この判定の確信度について</h3><ul><li>出口価格をエリア単価または利回りから機械的に算出している（成約事例ではない）</li><li>基本情報（価格・所在地・種目・面積・取引態様）が揃っている</li><li>権利・法令上の論点があり、現地および役所調査で結果が変わりうる</li></ul><p><strong>次にこれをいただければ精度が上がります:</strong></p><ul><li>近隣の成約事例を3件以上いただければ、出口価格の精度が上がります</li><li>権利関係（境界未確定）の資料をご提供ください</li></ul><p class='meta'>確信度は入力データの充足度と出口根拠の質から機械的に算出した指標であり、取引の成否を予測するものではありません。なお成約確率は初期値（貴社実績で未調整）のため、順位づけの目安としてのみご覧ください。</p></div><div class='foot'><p><strong>免責事項</strong><br>本レポートは不動産鑑定評価書ではありません。宅地建物取引業法上の価格査定書、または不動産鑑定評価法に基づく鑑定評価書として作成されたものではなく、買取再販事業者様の一次仕入判断を支援する目的の情報提供資料です。記載の金額はお客様からご提供いただいた条件・データに基づく機械的な計算結果であり、成約価格・売却価格・利益を保証するものではありません。最終的な取得判断、現地調査、役所調査、法令適合性の確認、契約締結の可否は、お客様ご自身の責任において行ってください。</p><p>本レポートはお客様ご自身がご提供されたデータのみを処理して作成しています。当社が第三者のデータベースへ自動アクセスして取得した情報は含まれていません。</p><p>発行: 株式会社ライフサポート／2026-08-05 10:00</p></div></div></body></html>

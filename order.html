@@ -1,0 +1,308 @@
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>お申し込み｜仕入ジャッジAI</title>
+<meta name="description" content="仕入ジャッジAIのお申し込みフォーム。注文番号を発行し、資料を拝見したうえで決済前に受付可否をご連絡します。">
+<style>
+:root{
+  --paper:#f7f8f6; --card:#ffffff; --ink:#101a1f; --ink-2:#31434b;
+  --slate:#61737a; --rule:#d9e0dc; --rule-2:#eceff0;
+  --accent:#0b6b4f; --accent-soft:#e6f1eb; --accent-ink:#074a37;
+  --alert:#a33a2a; --alert-soft:#fbeeeb;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"MS PMincho",serif;
+  --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --paper:#0d1417; --card:#141d21; --ink:#e8eeeb; --ink-2:#c3d0cb;
+  --slate:#8fa3a8; --rule:#28363b; --rule-2:#1d282c;
+  --accent:#4fbf93; --accent-soft:#12291f; --accent-ink:#8fe0bd;
+  --alert:#e08472; --alert-soft:#2a1a17;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--gothic);
+  line-height:1.8;font-size:15.5px;-webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--rule);background:var(--card)}
+header .wrap{display:flex;align-items:center;gap:14px;padding:14px 20px;flex-wrap:wrap}
+header b{font-family:var(--mincho);font-size:18px;letter-spacing:.02em}
+header nav{margin-left:auto;display:flex;gap:16px;font-size:14px}
+a{color:var(--accent)}
+h1{font-family:var(--mincho);font-size:26px;margin:30px 0 10px;line-height:1.5}
+h2{font-size:17px;margin:32px 0 8px;padding-top:18px;border-top:1px solid var(--rule)}
+.lead{color:var(--ink-2)}
+.muted{color:var(--slate);font-size:13.5px}
+.note{border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:8px;
+  padding:14px 18px;margin:18px 0;background:var(--card)}
+.note.warn{border-left-color:var(--alert);background:var(--alert-soft)}
+.field{margin:16px 0}
+label{display:block;font-weight:600;font-size:14.5px;margin-bottom:5px}
+.req{color:var(--alert);font-size:11.5px;margin-left:6px;font-weight:400}
+.opt{color:var(--slate);font-size:11.5px;margin-left:6px;font-weight:400}
+input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;
+  background:var(--card);color:var(--ink);font:inherit}
+textarea{min-height:92px}
+.hint{color:var(--slate);font-size:12.5px;margin-top:4px}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.check{display:flex;gap:9px;align-items:flex-start;margin:9px 0;font-weight:400;font-size:14px}
+.check input{margin-top:4px;flex:none;width:auto}
+fieldset{border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin:16px 0;background:var(--card)}
+legend{font-weight:600;font-size:14.5px;padding:0 6px}
+.btn{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:8px;
+  padding:13px 26px;font:inherit;font-weight:600;cursor:pointer;margin-top:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sub{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+pre{white-space:pre-wrap;word-break:break-all;background:var(--card);border:1px solid var(--rule);
+  border-radius:8px;padding:14px;font-size:12.5px;overflow-x:auto}
+#done{display:none}
+.orderid{font-family:var(--mincho);font-size:24px;letter-spacing:.06em;color:var(--accent-ink);
+  background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;
+  padding:12px 18px;display:inline-block;margin:8px 0}
+footer{border-top:1px solid var(--rule);margin-top:48px;padding:22px 0 46px;color:var(--slate);font-size:13px}
+footer a{margin-right:14px}
+.err{color:var(--alert);font-size:13px;margin-top:8px}
+</style></head><body>
+<header><div class="wrap"><b>仕入ジャッジAI</b>
+<span class="muted">物件資料から、買える上限と必要指値率を</span>
+<nav><a href="index.html">サービス</a><a href="index.html#price">料金</a><a href="legal.html">規約</a></nav>
+</div></header>
+
+<main class="wrap">
+<div id="form-area">
+<h1>お申し込み</h1>
+<p class="lead">この画面でお申し込みいただくと、<b>注文番号</b>を発行します。<br>
+資料を拝見したうえで、<b>お支払いの前に</b>受付できるかどうかをご連絡します。</p>
+
+<div class="note">
+  <b>お申し込みからの流れ</b>
+  <ol style="margin:8px 0 0;padding-left:20px">
+    <li>このフォームを送信 → 注文番号を発行</li>
+    <li>資料の送付方法をこちらからご案内（メール）</li>
+    <li>資料を拝見し、<b>決済前に</b>受付可否をご連絡（不足があれば追加をお願いします）</li>
+    <li>受付可能の場合のみ、お支払いのご案内</li>
+    <li>ご入金の確認後、原則翌営業日までに納品</li>
+  </ol>
+</div>
+
+<div class="note warn">
+  <b>資料についてのお願い</b>
+  <p style="margin:6px 0 0">β版では、<b>一般に公開された販売図面</b>、<b>ご自身で作成された物件概要</b>、
+  <b>利用する権限をお持ちの資料</b>のみお預かりします。会員制サイトから出力されたデータは対象外です。<br>
+  売主様・お客様の<b>氏名、住所の号数、電話番号は、マスキングしてから</b>お送りください。</p>
+</div>
+
+<form id="f" novalidate>
+<h2>1. ご連絡先</h2>
+<div class="row">
+  <div class="field"><label for="company">会社名<span class="req">必須</span></label>
+    <input id="company" type="text" required autocomplete="organization"></div>
+  <div class="field"><label for="person">担当者名<span class="req">必須</span></label>
+    <input id="person" type="text" required autocomplete="name"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="email">メールアドレス<span class="req">必須</span></label>
+    <input id="email" type="email" required autocomplete="email">
+    <div class="hint">受付可否のご連絡と納品に使用します。</div></div>
+  <div class="field"><label for="tel">電話番号<span class="req">必須</span></label>
+    <input id="tel" type="tel" required autocomplete="tel">
+    <div class="hint">資料の内容を確認させていただく場合があります。</div></div>
+</div>
+
+<h2>2. 案件について</h2>
+<div class="row">
+  <div class="field"><label for="ptype">物件種別<span class="req">必須</span></label>
+    <select id="ptype" required>
+      <option value="">選択してください</option>
+      <option>土地</option><option>中古戸建</option><option>中古マンション（区分）</option>
+      <option>一棟アパート・マンション</option><option>再建築不可</option>
+      <option>底地・借地権</option><option>共有持分</option><option>その他</option>
+    </select></div>
+  <div class="field"><label for="area">物件所在地<span class="req">必須</span></label>
+    <input id="area" type="text" required placeholder="例）東京都◯◯区◯◯（町名まで）">
+    <div class="hint"><b>番地・号数は書かないでください。</b>町名までで結構です。</div></div>
+</div>
+<div class="field"><label for="plan">希望商品<span class="req">必須</span></label>
+  <select id="plan" required>
+    <option value="A">初回お試し 仕入判断レポート ／ 4,980円（税込）／ 1案件</option>
+    <option value="B">仕入判断レポート ／ 9,800円（税込）／ 1案件</option>
+    <option value="C">7日間 仕入候補選別テスト ／ 9,800円（税込）</option>
+    <option value="D">継続仕入判断サポート ／ 月額 49,800円（税込）</option>
+  </select>
+  <div class="hint">はじめての方は、初回お試し（4,980円）をおすすめします。</div></div>
+<div class="field"><label for="due">希望納期<span class="req">必須</span></label>
+  <select id="due" required>
+    <option>翌営業日までで構わない</option>
+    <option>2営業日以内</option>
+    <option>できるだけ早く（対応可否をご相談ください）</option>
+  </select></div>
+
+<fieldset><legend>お手元の資料<span class="req">必須（1つ以上）</span></legend>
+  <label class="check"><input type="checkbox" name="files" value="販売図面（一般公開されたもの）">販売図面（一般公開されたもの）</label>
+  <label class="check"><input type="checkbox" name="files" value="自社作成の物件概要">自社で作成された物件概要</label>
+  <label class="check"><input type="checkbox" name="files" value="レントロール">レントロール</label>
+  <label class="check"><input type="checkbox" name="files" value="登記情報">登記情報（公図・謄本など）</label>
+  <label class="check"><input type="checkbox" name="files" value="現地写真">現地写真</label>
+  <label class="check"><input type="checkbox" name="files" value="その他">その他</label>
+  <div class="hint">資料はこのフォームでは送信しません。注文番号の発行後、送付方法をご案内します。</div>
+</fieldset>
+
+<h2>3. 御社の仕入基準</h2>
+<p class="muted">この数値で計算します。<b>当方の基準は使いません。</b>
+  未記入の項目は「入力なし」として扱い、その項目に依存する数値は算出せず、
+  レポートに理由を明記します。推定値で埋めることはしません。</p>
+<div class="row">
+  <div class="field"><label for="margin">必要粗利率<span class="opt">任意</span></label>
+    <input id="margin" type="number" step="0.1" min="0" max="100" placeholder="例）15">
+    <div class="hint">％（出口価格に対して）</div></div>
+  <div class="field"><label for="ltv">融資のLTV<span class="opt">任意</span></label>
+    <input id="ltv" type="number" step="1" min="0" max="100" placeholder="例）80">
+    <div class="hint">％</div></div>
+  <div class="field"><label for="rate">借入金利<span class="opt">任意</span></label>
+    <input id="rate" type="number" step="0.01" min="0" max="20" placeholder="例）2.5">
+    <div class="hint">％（年）</div></div>
+  <div class="field"><label for="hold">想定保有期間<span class="opt">任意</span></label>
+    <input id="hold" type="number" step="1" min="0" max="60" placeholder="例）6">
+    <div class="hint">か月</div></div>
+</div>
+<div class="field"><label for="exit">出口の想定単価・根拠<span class="opt">任意</span></label>
+  <textarea id="exit" placeholder="例）このエリアの土地は坪単価90万円前後、建物は㎡9万円で見ています。近隣の成約事例があればそちらを。"></textarea></div>
+<div class="field"><label for="memo">その他ご要望<span class="opt">任意</span></label>
+  <textarea id="memo" placeholder="気になっている点、判断に迷っている点があればお書きください。"></textarea></div>
+
+<h2>4. 確認事項</h2>
+<fieldset><legend>すべてご確認ください<span class="req">必須</span></legend>
+  <label class="check"><input type="checkbox" id="ck_mask" required>
+    お送りする資料から、<b>個人情報（氏名・住所の号数・電話番号など）をマスキングまたは削除しました</b>、または送付前に行います。</label>
+  <label class="check"><input type="checkbox" id="ck_right" required>
+    お送りする資料は、<b>当社が正当に取得し、利用する権限を持つもの</b>であり、第三者へ提供することに問題がないことを確認しました。</label>
+  <label class="check"><input type="checkbox" id="ck_terms" required>
+    <a href="legal.html" target="_blank" rel="noopener">利用規約・免責事項・個人情報の取扱い</a>を読み、同意します。</label>
+  <label class="check"><input type="checkbox" id="ck_scope" required>
+    本サービスが<b>不動産鑑定評価ではなく、法的判断を提供するものでもなく、融資承認や利益を保証しない</b>こと、
+    <b>最終的な判断は当社が行う</b>ことを理解しました。</label>
+</fieldset>
+
+<div class="err" id="err" hidden></div>
+<button class="btn" type="submit">この内容で申し込む（注文番号を発行）</button>
+<p class="muted">送信ボタンを押した時点では課金されません。決済のご案内は、受付可能とご連絡したあとです。</p>
+</form>
+</div>
+
+<div id="done">
+<h1>お申し込みを受け付けました</h1>
+<p class="lead">下記の<b>注文番号</b>を控えてください。以後のご連絡はこの番号で行います。</p>
+<div class="orderid" id="oid"></div>
+<div class="note">
+  <b>次にお願いすること</b>
+  <ol style="margin:8px 0 0;padding-left:20px">
+    <li>下の「申込内容をメールで送る」を押して、申込内容を送信してください。</li>
+    <li>メールが開かない場合は、内容をコピーして <span id="mailto-addr2"></span> 宛にお送りください。</li>
+    <li>資料はこの画面では送信されません。折り返し、送付方法をご案内します。</li>
+  </ol>
+</div>
+<p><a class="btn" id="mailto" href="#">申込内容をメールで送る</a>
+   <button class="btn sub" type="button" id="copy">申込内容をコピー</button></p>
+<h2>送信される内容</h2>
+<pre id="payload"></pre>
+<p class="muted">この内容は、当方の受付処理でそのまま読み取れる形式です。編集しないでお送りください。</p>
+</div>
+</main>
+
+<footer class="wrap">
+  <p><a href="index.html">サービス</a><a href="index.html#price">料金</a>
+     <a href="legal.html">利用規約・免責・個人情報の取扱い</a></p>
+  <p class="muted">仕入ジャッジAI ／ 不動産鑑定評価ではありません。法的判断を提供するものではありません。
+    融資承認や利益を保証するものではありません。最終的なご判断は利用者が行うものです。</p>
+</footer>
+
+<script>
+// 申込先メールアドレス。承認後に1か所だけ書き換える。
+var INTAKE_EMAIL = "miyanaga@lsup.jp";
+var FORM_ENDPOINT = "";             // 外部フォームサービスを使う場合のPOST先（任意）
+
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get("plan")) {
+    var sel = document.getElementById("plan");
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === q.get("plan")) { sel.selectedIndex = i; }
+    }
+  }
+  var addr = INTAKE_EMAIL || "（申込先メールアドレスは承認後に設定されます）";
+  document.getElementById("mailto-addr2").textContent = addr;
+
+  function orderId() {
+    var d = new Date();
+    var p = function (n) { return String(n).padStart(2, "0"); };
+    var rand = ("00000" + Math.floor(Math.random() * 16777216).toString(16)).slice(-6);
+    return "ORD-" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + rand;
+  }
+
+  document.getElementById("f").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var err = document.getElementById("err");
+    var files = Array.prototype.slice.call(
+      document.querySelectorAll('input[name=files]:checked')).map(function (c) { return c.value; });
+    var required = ["company", "person", "email", "tel", "ptype", "area"];
+    var missing = required.filter(function (id) { return !document.getElementById(id).value.trim(); });
+    var checks = ["ck_mask", "ck_right", "ck_terms", "ck_scope"]
+      .filter(function (id) { return !document.getElementById(id).checked; });
+    if (missing.length || !files.length || checks.length) {
+      err.hidden = false;
+      err.textContent = "未入力の項目があります。"
+        + (missing.length ? "必須項目をご確認ください。" : "")
+        + (!files.length ? "お手元の資料を1つ以上お選びください。" : "")
+        + (checks.length ? "確認事項すべてにチェックをお願いします。" : "");
+      return;
+    }
+    err.hidden = true;
+
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+    var num = function (id) { return v(id) === "" ? null : Number(v(id)); };
+    var oid = orderId();
+    var data = {
+      schema: "shiire-judge-order/1",
+      order_id: oid,
+      submitted_at: new Date().toISOString(),
+      company: v("company"), person: v("person"), email: v("email"), tel: v("tel"),
+      property_type: v("ptype"), area: v("area"),
+      plan: v("plan"), due: v("due"), files: files,
+      criteria: {
+        required_gross_margin_rate_pct: num("margin"),
+        loan_ltv_pct: num("ltv"),
+        loan_interest_rate_pct: num("rate"),
+        holding_months: num("hold"),
+        exit_basis: v("exit") || null
+      },
+      memo: v("memo") || null,
+      confirmations: {
+        personal_data_masked: true, has_right_to_use: true,
+        agreed_terms: true, understood_scope: true
+      }
+    };
+    var text = JSON.stringify(data, null, 2);
+    document.getElementById("payload").textContent = text;
+    document.getElementById("oid").textContent = oid;
+
+    var subject = "【申込】仕入ジャッジAI " + oid + " / " + data.company;
+    var body = "仕入ジャッジAI お申し込み\n注文番号: " + oid
+      + "\n\n以下は受付処理用のデータです。編集せずにお送りください。\n\n" + text + "\n";
+    document.getElementById("mailto").href = "mailto:" + encodeURIComponent(INTAKE_EMAIL)
+      + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+
+    document.getElementById("copy").addEventListener("click", function () {
+      navigator.clipboard.writeText(text).then(function () {
+        document.getElementById("copy").textContent = "コピーしました";
+      });
+    });
+
+    if (FORM_ENDPOINT) {
+      fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" },
+        body: text }).catch(function () { /* 失敗してもメール導線が残る */ });
+    }
+
+    document.getElementById("form-area").style.display = "none";
+    document.getElementById("done").style.display = "block";
+    window.scrollTo(0, 0);
+  });
+})();
+</script>
+</body></html>

@@ -1,0 +1,17 @@
+# このリポジトリは公開ページ専用。以下は絶対に置かない。
+.env
+.env.*
+*.key
+*.pem
+*.csv
+*.db
+*.sqlite*
+*.log
+*.bak
+*.sql
+*.map
+config/*.local.json
+ledger/
+data/
+approvals/
+outbox/
