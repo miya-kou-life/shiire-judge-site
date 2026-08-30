@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>仕入ジャッジAI｜不動産仕入候補抽出・一次査定サービス</title>
-<meta name="description" content="お手元の物件資料から、御社の基準で「いくらまでなら買えるか」を24時間以内に。買取再販会社向けの一次仕入判断支援サービス。1案件4,980円から。">
+<title>仕入ジャッジAI｜仕入収支シミュレーション（法人・事業者専用）</title>
+<meta name="description" content="お手元の物件資料から、御社の基準で「いくらまでなら買えるか」を原則翌営業日までに。買取再販会社向けの一次仕入判断支援サービス。1案件4,980円から。">
 
 <style>
 :root{
@@ -208,10 +208,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="kicker">買取再販・不動産会社向け／一次仕入判断支援</div>
-      <h1>この物件、<br>いくらまでなら買えるか。</h1>
-      <p class="lead">お手元の物件資料をお送りいただければ、<b>御社の基準</b>で計算した
-        買える上限価格・必要指値額・出口3水準を、<b>24時間以内</b>にレポートでお返しします。</p>
+      <div class="kicker">法人・事業者専用／仕入収支シミュレーション</div>
+      <h1>御社の売却想定と粗利基準から、<br>買える上限を逆算。</h1>
+      <p class="lead"><b>御社が設定された売却想定額・必要粗利・取得費・工事費・保有費</b>をもとに、
+        仕入上限・必要指値額・必要指値率・収支・確認事項を整理してお返しします。
+        <b>当サービスが対象不動産の市場価値や適正価格を判定するものではありません。</b></p>
+      <p class="muted"><b>売却想定条件は御社にご入力いただきます。</b>ご入力がない場合、
+        出口価格や仕入上限は推定せず「売却想定条件未入力のため未算出」とお返しします。
+        AIが価格を推測することはありません。</p>
       <p class="muted">お預かりできるのは、<b>一般に公開された販売図面</b>、<b>お客様ご自身が作成された物件概要</b>、
         <b>お客様が利用する権限をお持ちの資料</b>で、<b>個人情報を削除またはマスキング済み</b>のものに限ります。
         会員制サイトから出力されたデータは、β版では対象外とさせていただきます。</p>
@@ -228,8 +232,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
           <span class="what"><b>即架電</b>合理的な指値や条件確認で案件化可能</span>
         </div>
         <dl>
-          <div class="row"><dt>公開価格</dt><dd>68,000,000円</dd></div>
-          <div class="row"><dt>標準出口</dt><dd>82,900,000円</dd></div>
+          <div class="row"><dt>公開価格</dt><dd>68,000,000円<small>（依頼者入力）</small></dd></div>
+          <div class="row"><dt>標準売却想定額</dt><dd>82,900,000円<small>（依頼者入力）</small></dd></div>
           <div class="row"><dt>想定総経費</dt><dd>8,524,700円</dd></div>
           <div class="row"><dt>買える仕入上限</dt><dd class="hi">62,383,967円</dd></div>
           <div class="row"><dt>必要指値額</dt><dd>5,616,033円</dd></div>
@@ -239,11 +243,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
         <div class="judge-foot">指値材料：滞留350日／空室2戸あり。
           仲介への確認質問3つと推奨アクションもレポートに含みます。</div>
       </div>
-      <p class="judge-cap">実際の納品レポートの抜粋（架空データ）</p>
+      <p class="judge-cap">実際の納品レポートの抜粋（架空データ／金額はすべて依頼者入力条件からの機械計算）</p>
     </div>
   </div>
 </section>
 
+<section class="wrap" style="padding-top:0">
+  <div class="note stop" style="margin-top:8px">
+    <h3 style="margin-top:0">法人・事業者専用サービスです</h3>
+    <p class="muted" style="margin:0">本サービスは、法人、宅地建物取引業者、不動産買取再販事業者、
+      不動産仲介・管理会社、その他<b>営業のため又は営業として</b>ご利用になる事業者の方専用です。
+      <b>個人消費者の方からのお申し込みはお受けしておりません。</b></p>
+  </div>
+</section>
 <section id="pains">
   <div class="wrap">
     <div class="head col"><div class="eyebrow">こんな状態になっていませんか</div>
@@ -322,7 +334,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
           <p class="muted">一般公開された販売図面、ご自身で作成された物件概要、
             レントロール、登記情報など、<b>利用する権限をお持ちで、個人情報をマスキング済み</b>の資料を。
             CSVとExcelは自動で読み取れます。PDFは内容を確認のうえ人力で構造化します。</p></li>
-        <li><h3>24時間以内にレポートをお届け</h3>
+        <li><h3>原則翌営業日までにレポートをお届け</h3>
           <p class="muted">HTMLファイルでお送りします。ブラウザで開いて印刷すればPDFになります。
             基準を変えての再計算は、同一案件であれば追加費用なしで1回まで承ります。</p></li>
       </ol>
@@ -368,6 +380,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   </div>
 </section>
 
+<section class="wrap">
+  <div class="head col"><div class="eyebrow">ご入力いただくもの</div>
+    <h2>売却想定額は、御社にご入力いただきます。</h2></div>
+  <p class="muted">当サービスは対象不動産の市場価値や適正価格を判定しません。
+    計算の出発点となる売却想定額は、次の<b>いずれか1つの方式</b>で御社にご指定いただきます。
+    これが<b>顧客指定条件</b>となり、すべての金額はこの条件からの機械計算です。</p>
+  <div class="scroll"><table class="plan-table">
+    <tr><th>方式</th><th>ご入力いただく項目</th></tr>
+    <tr><td>方式A</td><td>保守売却想定額／標準売却想定額／強気売却想定額</td></tr>
+    <tr><td>方式B</td><td>標準売却想定額／保守シナリオの下落率／強気シナリオの上昇率</td></tr>
+    <tr><td>方式C</td><td>顧客指定単価／顧客指定期待利回り／顧客指定賃料／顧客指定掛け目</td></tr>
+  </table></div>
+  <p class="muted"><b>いずれもご入力がない場合は、出口価格や仕入上限を推定せず
+    「売却想定条件未入力のため未算出」としてお返しします。</b>
+    所在地・価格・面積だけで金額を出すことはできません。AIが価格を推測することもありません。</p>
+</section>
 <section id="price">
   <div class="wrap">
     <div class="head"><div class="eyebrow">料金</div>
@@ -375,13 +403,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <!-- 主商品を1つに絞って見せる。4つ並列にしない。 -->
     <div class="plan feature lead-plan">
       <div class="code">まずはこちら</div>
-      <div class="name">初回お試し 仕入判断レポート</div>
+      <div class="name">初回お試し 仕入収支シミュレーション</div>
       <div class="price num">4,980<small>円／1案件（税込）</small></div>
       <ul>
-        <li><b>買える上限価格</b>（御社の必要粗利率・LTV・金利・保有期間から逆算）</li>
+        <li><b>仕入上限の機械計算</b>（御社入力の必要粗利率・LTV・金利・保有期間から逆算）</li>
         <li><b>必要指値額と必要指値率</b>（公開価格との差）</li>
         <li><b>仲介会社への確認質問3つ</b>（そのまま使える文面）</li>
-        <li>出口3水準（保守／標準／強気）・判定と確信度</li>
+        <li>依頼者入力の売却想定3水準（保守／標準／強気）によるシナリオ比較</li>
         <li>納品は<b>受付可能と判断したのち、原則翌営業日まで</b></li>
       </ul>
       <a class="btn btn-main" href="order.html?plan=A">1案件 4,980円で申し込む</a>
@@ -394,15 +422,16 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
       <summary>継続してお使いになる場合の商品（初回のあとで構いません）</summary>
       <div class="scroll"><table class="plan-table">
         <tr><th>商品</th><th>価格（税込）</th><th>対象</th><th>内容</th></tr>
-        <tr><td>仕入判断レポート</td><td>9,800円</td><td>1案件</td>
-            <td>全17項目の詳細レポート。出口3水準・指値根拠・価値向上要素・確認質問</td></tr>
-        <tr><td>7日間 仕入候補選別テスト</td><td>9,800円</td><td>7日間</td>
-            <td>お預かりした候補から優先順位を付けて日次でご報告（最大7回）</td></tr>
-        <tr><td>継続仕入判断サポート</td><td>月額 49,800円</td><td>1か月ごと</td>
-            <td>継続的な一次判断と選別。いつでも解約可</td></tr>
+        <tr><td>仕入判断・収支レポート</td><td>9,800円</td><td>1案件</td>
+            <td>全17項目の詳細レポート。シナリオ比較・指値根拠・論点整理・確認質問</td></tr>
+        <tr><td>7日間 仕入候補選別テスト</td><td>準備中</td><td>—</td>
+            <td>現在お申し込みは受け付けておりません</td></tr>
+        <tr><td>継続仕入判断サポート</td><td>準備中</td><td>—</td>
+            <td>現在お申し込みは受け付けておりません</td></tr>
       </table></div>
-      <p class="muted">初回のレポートをご覧いただいてから、必要な場合だけお選びください。
-        こちらから継続をお願いすることはありません。</p>
+      <p class="muted"><b>現在ご購入いただけるのは上の2商品のみです。</b>
+          7日間プランと月額プランは、ご利用実績を確認してから開始します。
+          売れていない段階でプランを増やすことはしません。</p>
     </details>
 
     <p class="muted" style="margin-top:20px">価格は検証期間中のものです。最初のお客様3社までは上記価格で提供し、
@@ -419,8 +448,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
       <div class="note">
         <h3 style="margin-top:0">やること</h3>
         <p class="muted" style="margin:0">お客様ごとに隔離した領域で処理し、他のお客様のデータや
-          当社の基準値と混ぜません。処理後のデータは、ご依頼がなければ90日で削除します。
-          いつでも即時削除をご請求いただけます。</p>
+          当社の基準値と混ぜません。処理後のデータは、ご依頼がなければ90日を目安に削除します。
+            削除のご請求は随時お受けし、対応後にご連絡します。</p>
       </div>
       <div class="note stop">
         <h3 style="margin-top:0">やらないこと</h3>
@@ -438,7 +467,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <div class="col">
       <details><summary>不動産鑑定評価書として使えますか</summary>
         <div class="body"><p>使えません。本サービスは不動産鑑定評価書でも、宅地建物取引業法上の
-          価格査定書でもありません。買取再販事業者様の一次仕入判断を支援する情報提供資料です。
+          価格査定書でもありません。買取再販事業者様の仕入判断支援のための情報提供資料です。
           金融機関への提出や対外的な価格の根拠資料としてはご利用いただけません。</p></div></details>
       <details><summary>どんなデータを送ればいいですか</summary>
         <div class="body"><p>物件概要書、販売図面、ご自身で出力されたCSV／Excel、レントロール、
@@ -456,7 +485,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
           現時点で当社は成約実績に基づく確率の較正を行っていないため、
           成約確率は初期値であり順位づけの目安としてのみご覧ください。この点は隠さず記載しています。</p></div></details>
       <details><summary>納品はどのくらいかかりますか</summary>
-        <div class="body"><p>CSV／Excelでいただいた場合、原則24時間以内です。PDFや紙資料のみの場合は、
+        <div class="body"><p>CSV／Excelでいただいた場合、原則原則翌営業日までです。PDFや紙資料のみの場合は、
           人力での構造化が必要なため48時間程度いただくことがあります。
           期限に間に合わない見込みが立った時点で、ご連絡のうえ返金いたします。</p></div></details>
       <details><summary>返金はできますか</summary>
@@ -466,7 +495,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
       <details><summary>会社の物件情報を渡すことに不安があります</summary>
         <div class="body"><p>お客様ごとに隔離した領域で処理し、他のお客様のデータや当社の基準値と混ぜません。
           第三者提供、統計・学習データへの利用は行いません。処理後90日で削除し、
-          それ以前でもご請求により即時削除します。秘密保持契約の締結にも対応します。</p></div></details>
+          それ以前でも削除のご請求を随時お受けし、対応後にご連絡します。秘密保持契約については、内容を拝見したうえで個別にご相談させてください。</p></div></details>
       <details><summary>継続利用のプランはありますか</summary>
         <div class="body"><p>月額プラン（PLAN D）をご用意していますが、まずは1案件（PLAN A／B）または
           7日間テスト（PLAN C）でお試しいただくことをおすすめします。
@@ -493,7 +522,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
             <li><b>禁止事項</b>／レポートの再販売、当方の許諾なく第三者へ提供すること、
               本サービスを不動産鑑定評価書または価格査定書として表示することを禁じます。</li>
             <li><b>料金・支払</b>／料金は申込時に表示する金額とし、決済完了後に作業を開始します。</li>
-            <li><b>納品</b>／原則としてお支払い確認から24時間以内に、
+            <li><b>納品</b>／原則としてお支払い確認から原則翌営業日までに、
               電子ファイル（HTML）をメールでお送りします。</li>
             <li><b>返金</b>／納品前のキャンセルは全額返金します。
               納品後も、計算根拠に明らかな誤りがあった場合は再計算または全額返金に応じます。
@@ -531,8 +560,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
         <div class="body">
           <p>本サービスが提供するレポートは、<b>不動産鑑定評価書ではありません。</b>
             不動産の鑑定評価に関する法律に基づく鑑定評価書、および宅地建物取引業法上の
-            価格査定書として作成されたものではなく、買取再販事業者様の一次仕入判断を
-            支援する目的の情報提供資料です。</p>
+            価格査定書として作成されたものではなく、買取再販事業者様の仕入判断支援のための目的の情報提供資料です。</p>
           <p>レポート記載の金額は、お客様からご提供いただいた条件およびデータに基づく
             機械的な計算結果であり、成約価格、売却価格、利益、
             取引の成立を保証するものではありません。</p>
@@ -555,7 +583,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
   <div class="wrap">
     <div>
       <div class="logo" style="font-size:16px">仕入ジャッジAI<span>SHIIRE JUDGE</span></div>
-      <p style="margin:8px 0 0">不動産仕入候補抽出・一次査定サービス</p>
+      <p style="margin:8px 0 0">仕入収支シミュレーション（法人・事業者専用）</p>
     </div>
     <div style="text-align:right">
       <!-- SELLER:START --><p style="margin:0">販売事業者：株式会社ライフサポート ／ 運営責任者：宮永 浩平 ／ miyanaga@lsup.jp ／ <a href="legal.html#tokusho">特定商取引法に基づく表記</a></p><!-- SELLER:END -->

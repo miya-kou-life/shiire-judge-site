@@ -89,6 +89,13 @@ footer a{margin-right:14px}
   売主様・お客様の<b>氏名、住所の号数、電話番号は、マスキングしてから</b>お送りください。</p>
 </div>
 
+<div class="note stop">
+  <b>法人・事業者専用サービスです</b>
+  <p style="margin:6px 0 0">本サービスは、法人、宅地建物取引業者、不動産買取再販事業者、
+  不動産仲介・管理会社、その他<b>営業のため又は営業として</b>ご利用になる事業者の方専用です。
+  <b>個人消費者の方からのお申し込みはお受けしておりません。</b></p>
+</div>
+
 <form id="f" novalidate>
 <h2>1. ご連絡先</h2>
 <div class="row">
@@ -96,6 +103,14 @@ footer a{margin-right:14px}
     <input id="company" type="text" required autocomplete="organization"></div>
   <div class="field"><label for="person">担当者名<span class="req">必須</span></label>
     <input id="person" type="text" required autocomplete="name"></div>
+</div>
+<div class="row">
+  <div class="field"><label for="corp">法人名または屋号<span class="req">必須</span></label>
+    <input id="corp" type="text" required>
+    <div class="hint">個人事業主の方は屋号をご記入ください。</div></div>
+  <div class="field"><label for="license">法人番号または宅建免許番号<span class="opt">任意</span></label>
+    <input id="license" type="text" placeholder="例）東京都知事(1)第00000号">
+    <div class="hint">ご記入は任意です。</div></div>
 </div>
 <div class="row">
   <div class="field"><label for="email">メールアドレス<span class="req">必須</span></label>
@@ -162,9 +177,23 @@ footer a{margin-right:14px}
     <input id="hold" type="number" step="1" min="0" max="60" placeholder="例）6">
     <div class="hint">か月</div></div>
 </div>
-<div class="field"><label for="exit">出口の想定単価・根拠<span class="opt">任意</span></label>
-  <textarea id="exit" placeholder="例）このエリアの土地は坪単価90万円前後、建物は㎡9万円で見ています。近隣の成約事例があればそちらを。"></textarea></div>
-<div class="field"><label for="memo">その他ご要望<span class="opt">任意</span></label>
+<div class="field"><label for="exitmode">売却想定条件の指定方式<span class="req">必須</span></label>
+    <select id="exitmode" required>
+      <option value="">選択してください</option>
+      <option value="A">方式A：保守／標準／強気の売却想定額をそれぞれ指定する</option>
+      <option value="B">方式B：標準売却想定額と、保守の下落率・強気の上昇率を指定する</option>
+      <option value="C">方式C：単価・期待利回り・賃料・掛け目を指定する</option>
+    </select>
+    <div class="hint"><b>当サービスは市場価値や適正価格を判定しません。</b>
+      売却想定額は御社にご指定いただきます。ご指定がない場合、出口価格と仕入上限は
+      推定せず「売却想定条件未入力のため未算出」とお返しします。</div></div>
+  <div class="field"><label for="exit">売却想定条件の内容<span class="req">必須</span></label>
+  <textarea id="exit" placeholder="方式Aの例）保守 3,700万円／標準 4,100万円／強気 4,500万円&#10;方式Bの例）標準 4,100万円、保守は-10%、強気は+10%&#10;方式Cの例）土地は坪90万円、建物は㎡9万円、期待利回り8%"></textarea>
+    <div class="hint">上で選ばれた方式の数値をご記入ください。</div></div>
+<div class="field"><label for="purpose">ご利用目的<span class="req">必須</span></label>
+    <input id="purpose" type="text" required placeholder="例）持込案件の一次判断にかかる時間を減らすため">
+    <div class="hint">どのような業務でお使いになるかをご記入ください。</div></div>
+  <div class="field"><label for="memo">その他ご要望<span class="opt">任意</span></label>
   <textarea id="memo" placeholder="気になっている点、判断に迷っている点があればお書きください。"></textarea></div>
 
 <h2>4. 確認事項</h2>
@@ -175,30 +204,41 @@ footer a{margin-right:14px}
     お送りする資料は、<b>当社が正当に取得し、利用する権限を持つもの</b>であり、第三者へ提供することに問題がないことを確認しました。</label>
   <label class="check"><input type="checkbox" id="ck_terms" required>
     <a href="legal.html" target="_blank" rel="noopener">利用規約・免責事項・個人情報の取扱い</a>を読み、同意します。</label>
-  <label class="check"><input type="checkbox" id="ck_scope" required>
+  <label class="check"><input type="checkbox" id="ck_biz" required>
+      本サービスを<b>営業のため又は営業として</b>利用します。</label>
+    <label class="check"><input type="checkbox" id="ck_notconsumer" required>
+      <b>個人消費者としての利用ではありません。</b></label>
+    <label class="check"><input type="checkbox" id="ck_scope" required>
     本サービスが<b>不動産鑑定評価ではなく、法的判断を提供するものでもなく、融資承認や利益を保証しない</b>こと、
     <b>最終的な判断は当社が行う</b>ことを理解しました。</label>
 </fieldset>
 
 <div class="err" id="err" hidden></div>
-<button class="btn" type="submit">この内容で申し込む（注文番号を発行）</button>
-<p class="muted">送信ボタンを押した時点では課金されません。決済のご案内は、受付可能とご連絡したあとです。</p>
+<button class="btn" type="submit">申込内容を作成する（注文番号を発行）</button>
+<p class="muted">このボタンでは申込みは完了しません。次の画面でメールを送信していただいて受付となります。
+        課金は、受付可能とご連絡したあとの決済案内をもって発生します。</p>
 </form>
 </div>
 
 <div id="done">
-<h1>お申し込みを受け付けました</h1>
-<p class="lead">下記の<b>注文番号</b>を控えてください。以後のご連絡はこの番号で行います。</p>
+<h1>申込内容を作成しました</h1>
+<div class="note stop" style="margin-bottom:14px">
+      <b>この画面で注文番号を作成しただけでは、申込みは完了していません。</b><br>
+      メールの送信完了をもって受付となります。下のボタンからメールをお送りください。<br>
+      <span class="muted">なお、当サイトはメール送信の成否を確認できません。
+      送信後に受付のご連絡が届かない場合は、お手数ですがお問い合わせください。</span>
+    </div>
+    <p class="lead">下記の<b>注文番号</b>を控えてください。以後のご連絡はこの番号で行います。</p>
 <div class="orderid" id="oid"></div>
 <div class="note">
   <b>次にお願いすること</b>
   <ol style="margin:8px 0 0;padding-left:20px">
-    <li>下の「申込内容をメールで送る」を押して、申込内容を送信してください。</li>
+    <li>下の「メールを送信して申込みを完了する」を押して、申込内容を送信してください。</li>
     <li>メールが開かない場合は、内容をコピーして <span id="mailto-addr2"></span> 宛にお送りください。</li>
     <li>資料はこの画面では送信されません。折り返し、送付方法をご案内します。</li>
   </ol>
 </div>
-<p><a class="btn" id="mailto" href="#">申込内容をメールで送る</a>
+<p><a class="btn" id="mailto" href="#">メールを送信して申込みを完了する</a>
    <button class="btn sub" type="button" id="copy">申込内容をコピー</button></p>
 <h2>送信される内容</h2>
 <pre id="payload"></pre>
@@ -241,9 +281,9 @@ var FORM_ENDPOINT = "";             // 外部フォームサービスを使う�
     var err = document.getElementById("err");
     var files = Array.prototype.slice.call(
       document.querySelectorAll('input[name=files]:checked')).map(function (c) { return c.value; });
-    var required = ["company", "person", "email", "tel", "ptype", "area"];
+    var required = ["company", "corp", "person", "email", "tel", "ptype", "area", "purpose", "exitmode", "exit"];
     var missing = required.filter(function (id) { return !document.getElementById(id).value.trim(); });
-    var checks = ["ck_mask", "ck_right", "ck_terms", "ck_scope"]
+    var checks = ["ck_mask", "ck_right", "ck_terms", "ck_scope", "ck_biz", "ck_notconsumer"]
       .filter(function (id) { return !document.getElementById(id).checked; });
     if (missing.length || !files.length || checks.length) {
       err.hidden = false;
@@ -262,7 +302,9 @@ var FORM_ENDPOINT = "";             // 外部フォームサービスを使う�
       schema: "shiire-judge-order/1",
       order_id: oid,
       submitted_at: new Date().toISOString(),
-      company: v("company"), person: v("person"), email: v("email"), tel: v("tel"),
+      company: v("company"), corporate_name: v("corp"),
+      license_no: v("license") || null, purpose: v("purpose"),
+      person: v("person"), email: v("email"), tel: v("tel"),
       property_type: v("ptype"), area: v("area"),
       plan: v("plan"), due: v("due"), files: files,
       criteria: {
@@ -270,12 +312,15 @@ var FORM_ENDPOINT = "";             // 外部フォームサービスを使う�
         loan_ltv_pct: num("ltv"),
         loan_interest_rate_pct: num("rate"),
         holding_months: num("hold"),
-        exit_basis: v("exit") || null
+        exit_scenario_mode: v("exitmode"),
+        exit_scenario_input: v("exit") || null,
+        exit_priced_by: "依頼者入力（当サービスは価格を推定しない）"
       },
       memo: v("memo") || null,
       confirmations: {
         personal_data_masked: true, has_right_to_use: true,
-        agreed_terms: true, understood_scope: true
+        agreed_terms: true, understood_scope: true,
+        business_use: true, not_a_consumer: true
       }
     };
     var text = JSON.stringify(data, null, 2);
