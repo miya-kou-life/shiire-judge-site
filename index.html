@@ -1,593 +1,816 @@
+<!doctype html>
+<html lang="ja">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>仕入ジャッジAI｜仕入収支シミュレーション（法人・事業者専用）</title>
-<meta name="description" content="お手元の物件資料から、御社の基準で「いくらまでなら買えるか」を原則翌営業日までに。買取再販会社向けの一次仕入判断支援サービス。1案件4,980円から。">
-
+<meta name="description" content="御社が設定した売却想定額・必要粗利・費用条件から、仕入上限・必要指値率・リスク・確認質問・推奨アクションを1つのレポートに整理します。初回1案件4,980円、継続契約不要。法人・事業者専用。">
+<meta name="theme-color" content="#0f1a17">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="仕入ジャッジAI｜買える上限を、御社の基準で逆算する">
+<meta property="og:description" content="売却想定と粗利基準から、仕入上限・必要指値率・リスク・確認質問まで1つのレポートに。初回1案件4,980円、継続契約不要。法人・事業者専用。">
+<meta property="og:image" content="https://miya-kou-life.github.io/shiire-judge-site/assets/ogp.png">
+<meta property="og:url" content="https://miya-kou-life.github.io/shiire-judge-site/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="仕入ジャッジAI｜買える上限を、御社の基準で逆算する">
+<meta name="twitter:description" content="売却想定と粗利基準から、仕入上限・必要指値率・リスク・確認質問まで1つのレポートに。初回1案件4,980円。">
+<meta name="twitter:image" content="https://miya-kou-life.github.io/shiire-judge-site/assets/ogp.png">
 <style>
+/* βはライトテーマ固定。OS設定による自動切り替えは行わない。 */
 :root{
-  --paper:#f7f8f6; --card:#ffffff; --ink:#101a1f; --ink-2:#31434b;
-  --slate:#61737a; --rule:#d9e0dc; --rule-2:#eceff0;
-  --accent:#0b6b4f; --accent-soft:#e6f1eb; --accent-ink:#074a37;
-  --alert:#a33a2a; --alert-soft:#fbeeeb; --warn:#8a6a12;
-  --shadow:0 1px 2px rgba(16,26,31,.05),0 8px 24px -12px rgba(16,26,31,.18);
-  --mincho:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"MS PMincho",serif;
-  --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
+  --ink:#12201c; --ink-2:#54655f; --ink-3:#7d8f88;
+  --paper:#ffffff; --paper-2:#f4f7f5; --paper-3:#eaf0ec;
+  --deep:#0f1a17; --deep-2:#16241f; --deep-line:#2f4a41; --deep-ink:#c9d8d2;
+  --accent:#1d7f5c; --accent-2:#166848; --accent-soft:#e6f3ed; --accent-bright:#7fd1b0;
+  --alert:#b3261e; --alert-soft:#fdecea; --warn:#a86a00; --warn-soft:#fdf3e2;
+  --rule:#dbe4e0; --rule-2:#f0f4f2; --line:#dbe4e0;
+  --shadow:0 1px 2px rgba(16,32,28,.05),0 8px 24px rgba(16,32,28,.06);
+  --gothic:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic Medium",sans-serif;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho",serif;
+  --max:1120px;
 }
-@media (prefers-color-scheme:dark){
-  :root{
-    --paper:#0d1417; --card:#141d21; --ink:#e8eeeb; --ink-2:#c3d0cb;
-    --slate:#8fa3a8; --rule:#28363b; --rule-2:#1d282c;
-    --accent:#4fbf93; --accent-soft:#12291f; --accent-ink:#8fe0bd;
-    --alert:#e08472; --alert-soft:#2a1a17; --warn:#d8b45c;
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#0d1417; --card:#141d21; --ink:#e8eeeb; --ink-2:#c3d0cb;
-  --slate:#8fa3a8; --rule:#28363b; --rule-2:#1d282c;
-  --accent:#4fbf93; --accent-soft:#12291f; --accent-ink:#8fe0bd;
-  --alert:#e08472; --alert-soft:#2a1a17; --warn:#d8b45c;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
-}
-:root[data-theme="light"]{
-  --paper:#f7f8f6; --card:#ffffff; --ink:#101a1f; --ink-2:#31434b;
-  --slate:#61737a; --rule:#d9e0dc; --rule-2:#eceff0;
-  --accent:#0b6b4f; --accent-soft:#e6f1eb; --accent-ink:#074a37;
-  --alert:#a33a2a; --alert-soft:#fbeeeb; --warn:#8a6a12;
-  --shadow:0 1px 2px rgba(16,26,31,.05),0 8px 24px -12px rgba(16,26,31,.18);
-}
-
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--gothic);
-  font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
-.col{max-width:660px}
-h1,h2,h3{font-family:var(--mincho);font-weight:600;text-wrap:balance;letter-spacing:.01em}
-h1{font-size:clamp(30px,5.2vw,46px);line-height:1.35;margin:0 0 20px}
-h2{font-size:clamp(21px,3vw,27px);line-height:1.45;margin:0 0 8px}
-h3{font-size:17px;margin:0 0 6px}
-p{margin:0 0 16px}
-a{color:var(--accent-ink);text-underline-offset:3px}
-a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{
-  outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-.eyebrow{font-family:var(--gothic);font-size:12px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--slate);margin:0 0 14px;font-weight:600}
-.lead{font-size:17.5px;color:var(--ink-2)}
-.muted{color:var(--slate);font-size:14px}
+  font-size:16px;line-height:1.85;letter-spacing:.01em;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent-2)}
+h1,h2,h3{line-height:1.35;letter-spacing:-.01em;margin:0}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
 .num{font-variant-numeric:tabular-nums}
-
-section{padding:64px 0;border-top:1px solid var(--rule-2)}
-section:first-of-type{border-top:0}
-.head{border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:32px}
+.muted{color:var(--ink-2);font-size:14.5px}
+.small{font-size:13px;color:var(--ink-3)}
 
 /* ヘッダー */
-.masthead{padding:22px 0;border-bottom:1px solid var(--rule)}
-.masthead .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.logo{font-family:var(--mincho);font-size:19px;font-weight:600;letter-spacing:.02em}
-.logo span{color:var(--accent);font-family:var(--gothic);font-size:11px;
-  letter-spacing:.14em;display:block;font-weight:700;margin-top:2px}
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);
+  backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--rule)}
+.hd{display:flex;align-items:center;gap:22px;height:60px}
+.logo{font-weight:800;font-size:17px;letter-spacing:.02em;white-space:nowrap}
+.logo span{display:block;font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);font-weight:600}
+nav{display:flex;gap:20px;margin-left:auto;font-size:14px}
+nav a{color:var(--ink-2);text-decoration:none;white-space:nowrap}
+nav a:hover{color:var(--accent-2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border-radius:9px;padding:13px 22px;font-weight:700;font-size:15px;
+  text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:.15s}
+.btn-main{background:var(--accent);color:#fff}
+.btn-main:hover{background:var(--accent-2)}
+.btn-sub{background:transparent;color:var(--accent-2);border-color:var(--rule)}
+.btn-sub:hover{border-color:var(--accent);background:var(--accent-soft)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.28)}
+.btn-ghost:hover{background:rgba(255,255,255,.16)}
+.btn-sm{padding:9px 16px;font-size:14px}
+nav .btn{margin-left:2px}
 
 /* ヒーロー */
-.hero{padding:72px 0 60px}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:start}
-.kicker{display:inline-block;background:var(--accent-soft);color:var(--accent-ink);
-  font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:2px;margin-bottom:22px;
-  letter-spacing:.04em}
+.hero{background:var(--deep);color:#eef2f0;position:relative;overflow:hidden;
+  padding:56px 0 64px;border-bottom:1px solid var(--deep-line)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.13;pointer-events:none;
+  background-image:linear-gradient(var(--deep-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--deep-line) 1px,transparent 1px);background-size:44px 44px}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.1em;
+  color:var(--accent-bright);border:1px solid var(--deep-line);border-radius:999px;padding:5px 13px}
+.hero h1{font-size:39px;font-weight:800;margin:18px 0 0;color:#fff;letter-spacing:-.015em}
+.hero h1 b{color:var(--accent-bright)}
+.hero .lead{margin:16px 0 0;font-size:16.5px;line-height:1.85;color:#c9d8d2;max-width:34em}
+.trust{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.trust li{font-size:13.5px;font-weight:600;color:#dfe9e5;background:rgba(127,209,176,.1);
+  border:1px solid var(--deep-line);border-radius:7px;padding:7px 12px;display:flex;gap:7px;align-items:center}
+.trust svg{flex:none}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.hero-note{margin:16px 0 0;font-size:12.5px;color:#8fa39c}
 
-/* 判定カード（納品物と同じ構造装置） */
-.judge{background:var(--card);border:1px solid var(--rule);box-shadow:var(--shadow);
-  border-radius:3px;overflow:hidden}
-.judge-top{display:flex;align-items:center;gap:14px;padding:16px 20px;
-  background:var(--accent);color:#fff}
-.judge-top .letter{font-family:var(--mincho);font-size:38px;line-height:1;font-weight:600}
-.judge-top .what{font-size:12.5px;line-height:1.5;opacity:.95}
-.judge-top .what b{display:block;font-size:14.5px;opacity:1}
-.judge dl{margin:0;padding:6px 20px 14px}
-.judge .row{display:flex;justify-content:space-between;gap:16px;
-  padding:9px 0;border-bottom:1px solid var(--rule-2);font-size:14.5px}
-.judge .row:last-child{border-bottom:0}
-.judge dt{color:var(--slate);margin:0}
-.judge dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
-.judge .hi{color:var(--accent-ink);font-size:16px}
-.judge-foot{padding:12px 20px 16px;border-top:1px solid var(--rule);
-  font-size:12.5px;color:var(--slate);background:var(--rule-2)}
-.judge-cap{font-size:12px;color:var(--slate);margin-top:10px;text-align:right}
+/* レポートプレビュー */
+.browser{background:var(--deep-2);border:1px solid var(--deep-line);border-radius:12px;
+  overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.browser-bar{display:flex;align-items:center;gap:6px;padding:10px 13px;
+  background:#101c18;border-bottom:1px solid var(--deep-line)}
+.dot{width:9px;height:9px;border-radius:50%;background:#33463f}
+.browser-title{margin-left:8px;font-size:11.5px;color:#7b8f88;letter-spacing:.02em}
+.rep{padding:18px 20px 16px}
+.rep-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.judge-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent);
+  color:#fff;border-radius:8px;padding:6px 12px;font-weight:800;font-size:14.5px}
+.judge-badge .l{font-size:18px;line-height:1}
+.rep-sub{font-size:12.5px;color:#8fa39c}
+.rep-rows{margin:14px 0 0}
+.rep-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:9px 0;border-bottom:1px solid #24382f;font-size:14.5px}
+.rep-row:last-of-type{border-bottom:0}
+.rep-row .k{color:#93a8a1}
+.rep-row .v{font-weight:700;color:#eef2f0}
+.rep-row .v.hi{color:var(--accent-bright);font-size:18px}
+.rep-block{margin-top:12px;padding:11px 13px;border-radius:8px;font-size:13px;line-height:1.7}
+.rep-block.risk{background:rgba(179,38,30,.13);border:1px solid rgba(179,38,30,.35);color:#f4c9c6}
+.rep-block.q{background:rgba(127,209,176,.08);border:1px solid var(--deep-line);color:#c9d8d2}
+.rep-block.act{background:rgba(29,127,92,.16);border:1px solid rgba(127,209,176,.3);color:#dff3ea}
+.rep-block b{color:#fff}
+.rep-block ol{margin:6px 0 0;padding-left:18px}
+.rep-block li{margin:3px 0}
+.rep-foot{margin-top:12px;font-size:11.5px;color:#7b8f88}
 
-/* CTA */
-.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;align-items:center}
-.btn{display:inline-block;padding:13px 26px;border-radius:2px;font-weight:700;
-  text-decoration:none;font-size:15px;border:1.5px solid transparent;transition:.15s}
-.btn-main{background:var(--accent);color:#fff}
-.btn-main:hover{background:var(--accent-ink)}
-.btn-sub{border-color:var(--rule);color:var(--ink)}
-.btn-sub:hover{border-color:var(--accent);color:var(--accent-ink)}
+/* セクション共通 */
+section{padding:64px 0}
+.sec-tint{background:var(--paper-2)}
+.sec-deep{background:var(--deep);color:#eef2f0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--accent-2)}
+.sec-deep .eyebrow{color:var(--accent-bright)}
+h2{font-size:27px;font-weight:800;margin:10px 0 0}
+.sec-deep h2{color:#fff}
+.sec-lead{margin:12px 0 0;color:var(--ink-2);font-size:15.5px;max-width:42em}
+.sec-deep .sec-lead{color:#a9bcb5}
+.head{margin-bottom:30px}
 
-/* 汎用グリッド */
-.grid{display:grid;gap:20px}
-.g2{grid-template-columns:repeat(2,1fr)}
-.g3{grid-template-columns:repeat(3,1fr)}
-.card{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:22px}
+/* 4ステップ */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.step{background:var(--paper);border:1px solid var(--rule);border-radius:12px;
+  padding:20px 18px;position:relative;box-shadow:var(--shadow)}
+.step .ic{width:36px;height:36px;border-radius:9px;background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.step .n{position:absolute;top:16px;right:16px;font-size:12px;font-weight:800;color:var(--ink-3)}
+.step h3{font-size:15.5px;font-weight:700}
+.step p{margin:7px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.75}
 
-/* 課題リスト */
-.pains{list-style:none;padding:0;margin:0;display:grid;gap:2px}
-.pains li{padding:15px 0 15px 30px;border-bottom:1px solid var(--rule-2);position:relative}
-.pains li::before{content:"";position:absolute;left:4px;top:24px;width:12px;height:1.5px;
-  background:var(--accent)}
-.pains b{font-weight:700}
+/* 前後比較 */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col-box{border-radius:12px;padding:22px 22px 18px;border:1px solid var(--rule);background:var(--paper)}
+.col-box.before{background:var(--paper-3);border-color:var(--rule)}
+.col-box.after{background:var(--accent-soft);border-color:#bfe0d1}
+.col-box h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.col-box.before h3{color:var(--ink-2)}
+.col-box.after h3{color:var(--accent-2)}
+.col-box ul{margin:14px 0 0;padding:0;list-style:none}
+.col-box li{display:flex;gap:9px;padding:8px 0;font-size:14.5px;line-height:1.7;
+  border-top:1px solid rgba(0,0,0,.06)}
+.col-box li:first-child{border-top:0}
+.col-box svg{flex:none;margin-top:5px}
 
-/* 納品項目 */
-.items{list-style:none;padding:0;margin:0;columns:2;column-gap:32px;font-size:14.5px}
-.items li{padding:7px 0 7px 20px;position:relative;break-inside:avoid}
-.items li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700}
+/* 納品物4分類 */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cat{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:20px 18px;
+  box-shadow:var(--shadow)}
+.cat h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.cat ul{margin:12px 0 0;padding-left:17px}
+.cat li{font-size:13.5px;color:var(--ink-2);margin:5px 0;line-height:1.7}
+details.more{margin-top:18px;border:1px solid var(--rule);border-radius:10px;
+  background:var(--paper);padding:0 18px}
+details.more summary{cursor:pointer;padding:14px 0;font-weight:700;font-size:14.5px;color:var(--accent-2)}
+details.more[open] summary{border-bottom:1px solid var(--rule-2)}
+.items{columns:2;column-gap:26px;margin:12px 0 18px;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.items li{margin:4px 0;break-inside:avoid}
 
-/* 手順 */
-.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:18px}
-.steps li{counter-increment:s;padding-left:52px;position:relative}
-.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:34px;height:34px;
-  border:1.5px solid var(--accent);color:var(--accent-ink);border-radius:50%;
-  display:grid;place-items:center;font-family:var(--mincho);font-size:16px;font-weight:600}
+/* サンプル */
+.samples{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.scard{background:var(--paper);border:1px solid var(--rule);border-radius:12px;overflow:hidden;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;transition:.15s}
+.scard:hover{box-shadow:0 12px 30px rgba(16,32,28,.12);transform:translateY(-2px)}
+.shot{background:var(--paper-3);border-bottom:1px solid var(--rule);aspect-ratio:10/7;overflow:hidden}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.scard .b{padding:16px 17px 17px;display:flex;flex-direction:column;flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:11.5px;font-weight:700;border-radius:6px;padding:4px 9px;
+  background:var(--paper-3);color:var(--ink-2)}
+.chip.j{background:var(--accent);color:#fff}
+.chip.r{background:var(--alert-soft);color:var(--alert)}
+.scard h3{font-size:15px;font-weight:700;margin:11px 0 0}
+.scard dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px}
+.scard dt{color:var(--ink-3)}
+.scard dd{margin:0;text-align:right;font-weight:700}
+.scard .go{margin-top:auto;padding-top:14px}
 
 /* 料金 */
-.lead-plan{max-width:520px;margin:0 auto;border-width:2px}
-.lead-plan ul li{margin:7px 0}
-.more-plans{max-width:760px;margin:26px auto 0;border:1px solid var(--line);border-radius:10px;
-  padding:14px 18px;background:#fff}
-.more-plans summary{cursor:pointer;font-weight:600;font-size:14.5px}
-.more-plans[open] summary{margin-bottom:12px}
-.plan-table{width:100%;border-collapse:collapse;font-size:14px}
-.plan-table th,.plan-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-.plan-table th{background:#f7f8f9;font-weight:600;white-space:nowrap}
-.scroll{overflow-x:auto}
-.beta-scope{border:1px solid var(--line);border-left:3px solid var(--slate);
-  border-radius:8px;padding:14px 18px;margin:18px 0;background:#fbfbfc}
-.beta-scope h3{margin:0 0 8px;font-size:15px}
-.beta-scope ul{margin:0;padding-left:20px}
-.beta-scope li{margin:4px 0;font-size:14px;color:var(--slate)}
-.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.plan{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:22px 20px;
-  display:flex;flex-direction:column}
-.plan.feature{border-color:var(--accent);border-width:1.5px;position:relative}
-.plan.feature::after{content:"まずはここから";position:absolute;top:-11px;left:20px;
-  background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;
-  letter-spacing:.06em}
-.plan .code{font-family:var(--mincho);font-size:13px;color:var(--slate);letter-spacing:.1em}
-.plan .name{font-weight:700;font-size:16px;margin:4px 0 10px;line-height:1.5}
-.plan .price{font-family:var(--mincho);font-size:29px;font-weight:600;
-  font-variant-numeric:tabular-nums;line-height:1.2}
-.plan .price small{font-family:var(--gothic);font-size:12.5px;font-weight:400;color:var(--slate);
-  display:block;margin-top:3px}
-.plan ul{list-style:none;padding:0;margin:14px 0 18px;font-size:13.5px;color:var(--ink-2);
-  display:grid;gap:6px}
-.plan ul li{padding-left:14px;position:relative}
-.plan ul li::before{content:"−";position:absolute;left:0;color:var(--slate)}
-.plan .btn{margin-top:auto;text-align:center;font-size:14px;padding:11px 16px}
+.plans{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;align-items:start}
+.plan{border:1px solid var(--rule);border-radius:14px;padding:26px 24px;background:var(--paper);
+  box-shadow:var(--shadow)}
+.plan.lead{border:2px solid var(--accent);position:relative}
+.ribbon{position:absolute;top:-11px;left:24px;background:var(--accent);color:#fff;
+  font-size:11.5px;font-weight:800;letter-spacing:.06em;border-radius:6px;padding:4px 11px}
+.plan .pname{font-size:16px;font-weight:800}
+.plan .pprice{font-size:38px;font-weight:800;margin:8px 0 0;letter-spacing:-.02em}
+.plan .pprice small{font-size:14px;font-weight:700;color:var(--ink-2);margin-left:4px}
+.plan ul{margin:16px 0 0;padding:0;list-style:none}
+.plan li{display:flex;gap:9px;padding:7px 0;font-size:14px;line-height:1.7;color:var(--ink)}
+.plan li svg{flex:none;margin-top:5px}
+.plan .btn{width:100%;margin-top:18px}
+.soon{margin-top:16px;font-size:13px;color:var(--ink-3);border-top:1px dashed var(--rule);padding-top:14px}
 
-/* 注意ボックス */
-.note{border-left:3px solid var(--accent);background:var(--card);padding:18px 22px;
-  border-radius:0 3px 3px 0;border-top:1px solid var(--rule);
-  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.note.stop{border-left-color:var(--alert)}
+/* 信頼 */
+.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tcard{background:rgba(255,255,255,.05);border:1px solid var(--deep-line);border-radius:11px;padding:18px}
+.tcard h3{font-size:14.5px;font-weight:700;color:#fff}
+.tcard p{margin:7px 0 0;font-size:13.5px;color:#a9bcb5;line-height:1.75}
+.operator{margin-top:18px;background:rgba(255,255,255,.05);border:1px solid var(--deep-line);
+  border-radius:11px;padding:20px 22px}
+.operator h3{font-size:15px;color:#fff}
+.operator dl{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:13.5px}
+.operator dt{color:#8fa39c}
+.operator dd{margin:0;color:#dfe9e5}
 
-/* FAQ */
-details{border-bottom:1px solid var(--rule-2)}
-summary{cursor:pointer;padding:17px 0;font-weight:700;font-size:15.5px;list-style:none;
-  display:flex;justify-content:space-between;gap:16px;align-items:baseline}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"＋";color:var(--accent);font-weight:400;flex:none}
-details[open] summary::after{content:"−"}
-details .body{padding:0 0 18px;color:var(--ink-2);font-size:15px}
-details .body p:last-child{margin-bottom:0}
+/* 注記・FAQ */
+.note{border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:9px;
+  background:var(--paper);padding:16px 18px}
+.note.stop{border-left-color:var(--alert);background:var(--alert-soft)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note h3{font-size:14.5px;font-weight:800;margin:0 0 6px}
+.note p{margin:0;font-size:14px;line-height:1.8;color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+details.faq{border-bottom:1px solid var(--rule)}
+details.faq summary{cursor:pointer;padding:15px 0;font-weight:700;font-size:15px;list-style:none;
+  display:flex;justify-content:space-between;gap:16px;align-items:center}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:"＋";color:var(--accent);font-weight:800;flex:none}
+details.faq[open] summary::after{content:"−"}
+details.faq p{margin:0 0 16px;font-size:14.5px;color:var(--ink-2);line-height:1.85}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.plain{width:100%;border-collapse:collapse;font-size:14px;min-width:460px}
+table.plain th,table.plain td{border:1px solid var(--rule);padding:9px 12px;text-align:left;vertical-align:top}
+table.plain th{background:var(--rule-2);font-weight:700;white-space:nowrap}
 
-/* 法務 */
-.legal{font-size:13.5px;color:var(--ink-2)}
-.legal h3{font-size:15px;margin-top:22px}
-.legal ol{padding-left:22px}
-.legal li{margin:5px 0}
-
-footer{border-top:1px solid var(--rule);padding:36px 0 56px;font-size:13px;color:var(--slate)}
+/* 最終CTA・フッター */
+.final{background:var(--deep);color:#fff;text-align:center;padding:60px 0}
+.final h2{font-size:25px}
+.final p{color:#a9bcb5;margin:12px auto 0;max-width:40em;font-size:15px}
+footer{background:var(--paper-2);border-top:1px solid var(--rule);padding:28px 0;font-size:13.5px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{color:var(--ink-2)}
 
-@media (max-width:860px){
-  .hero-grid{grid-template-columns:1fr;gap:36px}
-  .plans{grid-template-columns:repeat(2,1fr)}
-  .g3,.g2{grid-template-columns:1fr}
-  .items{columns:1}
+/* モバイル固定CTA */
+.mcta{position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;gap:10px;padding:10px 14px;
+  background:rgba(255,255,255,.97);border-top:1px solid var(--rule);
+  box-shadow:0 -4px 16px rgba(16,32,28,.08)}
+.mcta .btn{flex:1;padding:12px 10px;font-size:14px}
+
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr;gap:32px}
+  .hero h1{font-size:32px}
+  .steps,.cats{grid-template-columns:repeat(2,1fr)}
+  .samples{grid-template-columns:1fr 1fr}
+  .plans{grid-template-columns:1fr}
+  .trust-grid{grid-template-columns:1fr 1fr}
+  nav a:not(.btn){display:none}
 }
-@media (max-width:560px){.plans{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:640px){
+  body{font-size:15.5px}
+  section{padding:46px 0}
+  .wrap{padding:0 18px}
+  .hero{padding:36px 0 44px}
+  .hero h1{font-size:27px}
+  h2{font-size:22px}
+  .steps,.cats,.compare,.samples,.grid2,.trust-grid{grid-template-columns:1fr}
+  .items{columns:1}
+  .cta-row .btn{width:100%}
+  .mcta{display:flex}
+  body{padding-bottom:64px}
+}
 </style>
+</head>
+<body>
 
-<header class="masthead">
-  <div class="wrap">
+<header>
+  <div class="wrap hd">
     <div class="logo">仕入ジャッジAI<span>SHIIRE JUDGE</span></div>
-    <a class="btn btn-main" href="order.html">申し込む</a>
+    <nav>
+      <a href="#how">できること</a>
+      <a href="#samples">サンプル</a>
+      <a href="#price">料金</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-main btn-sm" href="order.html">申し込む</a>
+    </nav>
   </div>
 </header>
 
 <main>
+
+<!-- ファーストビュー -->
 <section class="hero">
-  <div class="wrap hero-grid">
+  <div class="wrap">
     <div>
-      <div class="kicker">法人・事業者専用／仕入収支シミュレーション</div>
-      <h1>御社の売却想定と粗利基準から、<br>買える上限を逆算。</h1>
-      <p class="lead"><b>御社が設定された売却想定額・必要粗利・取得費・工事費・保有費</b>をもとに、
-        仕入上限・必要指値額・必要指値率・収支・確認事項を整理してお返しします。
-        <b>当サービスが対象不動産の市場価値や適正価格を判定するものではありません。</b></p>
-      <p class="muted"><b>売却想定条件は御社にご入力いただきます。</b>ご入力がない場合、
-        出口価格や仕入上限は推定せず「売却想定条件未入力のため未算出」とお返しします。
-        AIが価格を推測することはありません。</p>
-      <p class="muted">お預かりできるのは、<b>一般に公開された販売図面</b>、<b>お客様ご自身が作成された物件概要</b>、
-        <b>お客様が利用する権限をお持ちの資料</b>で、<b>個人情報を削除またはマスキング済み</b>のものに限ります。
-        会員制サイトから出力されたデータは、β版では対象外とさせていただきます。</p>
+      <span class="tag">法人・事業者専用</span>
+      <h1>その物件、<br><b>いくらなら買えるか</b>を数字にする。</h1>
+      <p class="lead">御社が設定した出口・粗利・費用条件を基に、仕入上限、必要指値率、リスク、確認質問、次のアクションを1つのレポートに整理します。単なる計算ではなく、判断に必要な論点まで揃えてお返しします。</p>
+      <ul class="trust">
+        <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l4 4 8-9" fill="none" stroke="#7fd1b0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>初回1案件 4,980円</li>
+        <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l4 4 8-9" fill="none" stroke="#7fd1b0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>継続契約は不要</li>
+        <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8.5l4 4 8-9" fill="none" stroke="#7fd1b0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>受付可否を確認してから決済</li>
+      </ul>
       <div class="cta-row">
-        <a class="btn btn-main" href="order.html">1案件 4,980円で試す</a>
-        <a class="btn btn-sub" href="#samples">サンプルレポートを見る</a>
+        <a class="btn btn-main" href="#samples">匿名サンプルを見る</a>
+        <a class="btn btn-ghost" href="order.html?plan=A">1案件 4,980円で試す</a>
       </div>
+      <p class="hero-note">不動産鑑定評価ではありません。当サービスが対象不動産の市場価値や適正価格を判定するものではありません。</p>
     </div>
 
     <div>
-      <div class="judge">
-        <div class="judge-top">
-          <span class="letter">A</span>
-          <span class="what"><b>即架電</b>合理的な指値や条件確認で案件化可能</span>
+      <div class="browser" role="img" aria-label="納品レポートの抜粋。判定A、仕入上限62,383,967円、必要指値率8.3%、想定粗利6,375,300円、致命的リスクと確認質問、推奨アクションを表示。すべて架空データ。">
+        <div class="browser-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="browser-title">仕入判断・収支レポート ／ SAMPLE-003</span>
         </div>
-        <dl>
-          <div class="row"><dt>公開価格</dt><dd>68,000,000円<small>（依頼者入力）</small></dd></div>
-          <div class="row"><dt>標準売却想定額</dt><dd>82,900,000円<small>（依頼者入力）</small></dd></div>
-          <div class="row"><dt>想定総経費</dt><dd>8,524,700円</dd></div>
-          <div class="row"><dt>買える仕入上限</dt><dd class="hi">62,383,967円</dd></div>
-          <div class="row"><dt>必要指値額</dt><dd>5,616,033円</dd></div>
-          <div class="row"><dt>必要指値率</dt><dd>8.3%</dd></div>
-          <div class="row"><dt>判定の確信度</dt><dd>中</dd></div>
-        </dl>
-        <div class="judge-foot">指値材料：滞留350日／空室2戸あり。
-          仲介への確認質問3つと推奨アクションもレポートに含みます。</div>
-      </div>
-      <p class="judge-cap">実際の納品レポートの抜粋（架空データ／金額はすべて依頼者入力条件からの機械計算）</p>
-    </div>
-  </div>
-</section>
-
-<section class="wrap" style="padding-top:0">
-  <div class="note stop" style="margin-top:8px">
-    <h3 style="margin-top:0">法人・事業者専用サービスです</h3>
-    <p class="muted" style="margin:0">本サービスは、法人、宅地建物取引業者、不動産買取再販事業者、
-      不動産仲介・管理会社、その他<b>営業のため又は営業として</b>ご利用になる事業者の方専用です。
-      <b>個人消費者の方からのお申し込みはお受けしておりません。</b></p>
-  </div>
-</section>
-<section id="pains">
-  <div class="wrap">
-    <div class="head col"><div class="eyebrow">こんな状態になっていませんか</div>
-      <h2>物件情報は届いているのに、判断が追いついていない。</h2></div>
-    <div class="col">
-      <ul class="pains">
-        <li><b>持込案件の返事が遅れて、他社に決まる。</b>「検討します」と言った翌週には売れている。</li>
-        <li><b>社長や役員しか査定できない。</b>担当者は数字を作れず、判断がボトルネックになる。</li>
-        <li><b>毎日届く物件表を開かないまま溜まる。</b>価格改定や再掲載の合図を見逃している。</li>
-        <li><b>「高いから無理」で終わらせている。</b>いくらなら買えるのか、指値が通る材料があるのかを詰めていない。</li>
-        <li><b>訳あり案件を敬遠している。</b>再建築不可・借地・越境の判断に時間がかかり、後回しになる。</li>
-      </ul>
-      <p style="margin-top:28px">本サービスは、この「一次判断」だけを切り出して外に出せるようにするものです。
-        現地調査・役所調査・最終判断は御社にお任せし、その手前の数字づくりと論点出しを引き受けます。</p>
-    </div>
-  </div>
-</section>
-
-<section id="deliverable">
-  <div class="wrap">
-    <div class="head col"><div class="eyebrow">納品物</div>
-      <h2>1案件につき、この17項目をレポートでお返しします。</h2></div>
-    <div class="grid g2" style="align-items:start">
-      <ul class="items">
-        <li>案件概要</li><li>保守出口</li><li>標準出口</li><li>強気出口</li>
-        <li>想定総経費</li><li>公開価格での粗利</li><li>買える仕入上限</li>
-        <li>必要指値額</li><li>必要指値率</li><li>指値が成立する可能性を示す材料</li>
-        <li>問題点</li><li>価値を上げられる要素</li><li>致命的リスク</li>
-        <li>仲介会社への確認質問3つ</li><li>推奨アクション</li>
-        <li>S / A / B / C / D 判定</li><li>判定の確信度</li>
-      </ul>
-      <div class="card">
-        <h3>「高いから見送り」では終わらせません</h3>
-        <p class="muted" style="margin-bottom:14px">公開価格で買えないという理由だけでD判定は出しません。
-          必ず仕入上限と必要指値率を出したうえで、その指値が通る材料（滞留日数・価格改定履歴・再掲載・
-          売主事情・取引態様）を探して提示します。</p>
-        <h3>計算は御社の基準で</h3>
-        <p class="muted" style="margin:0">必要粗利率・LTV・金利・想定保有期間・出口単価は、
-          お申込み時に御社の数字をご指定いただきます。当社の基準を押し付けることはありません。</p>
+        <div class="rep">
+          <div class="rep-head">
+            <span class="judge-badge"><span class="l">A</span>即架電</span>
+            <span class="rep-sub">一棟／滞留350日</span>
+          </div>
+          <div class="rep-rows">
+            <div class="rep-row"><span class="k">仕入上限</span><span class="v hi num">62,383,967円</span></div>
+            <div class="rep-row"><span class="k">必要指値率</span><span class="v num">8.3%</span></div>
+            <div class="rep-row"><span class="k">想定粗利</span><span class="v num">6,375,300円</span></div>
+          </div>
+          <div class="rep-block risk"><b>致命的リスク</b><br>提供データの範囲では検出されませんでした（要確認：レントロール未取得）</div>
+          <div class="rep-block q"><b>仲介会社への確認質問</b>
+            <ol><li>滞留350日の売却期限と価格見直しの余地</li>
+                <li>現況レントロールと直近の修繕履歴</li>
+                <li>年間賃料収入と現在の空室状況</li></ol></div>
+          <div class="rep-block act"><b>推奨アクション</b><br>即架電。仕入上限 62,383,967円 を上限に条件交渉する。</div>
+          <p class="rep-foot">架空データ。金額はすべて依頼者入力の条件からの機械計算です。</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="samples">
-  <div class="wrap">
-    <div class="head col"><div class="eyebrow">サンプル</div>
-      <h2>実際の納品物を3件公開しています。</h2></div>
-    <p class="col">物件データ・会社名はすべて架空です。実在の物件や当社の取引実績ではありません。
-      判定の幅（S／A／B）と、確信度・リスクの書き方をご確認ください。</p>
-    <div class="grid g3">
-      <div class="card"><h3>S判定：相続・空家の戸建</h3>
-        <p class="muted">公開価格のまま基準を満たす例。境界未確定の扱いも記載。</p>
-        <a href="samples/01_kodate_shichi.html">サンプルを開く →</a></div>
-      <div class="card"><h3>B判定：再建築不可の土地</h3>
-        <p class="muted">必要指値率25%超。接道解消・私道承諾など6つの価値向上要素を提示。</p>
-        <a href="samples/02_saikenchiku_fuka.html">サンプルを開く →</a></div>
-      <div class="card"><h3>A判定：一棟アパート</h3>
-        <p class="muted">必要指値率8.3%。空室2戸の収益改善と修繕未実施リスクを併記。</p>
-        <a href="samples/03_ittou_shuueki.html">サンプルを開く →</a></div>
-    </div>
-  </div>
-</section>
-
+<!-- 4ステップ -->
 <section id="how">
   <div class="wrap">
-    <div class="head col"><div class="eyebrow">ご利用の流れ</div>
-      <h2>お申込みから納品まで、3ステップ。</h2></div>
-    <div class="col">
-      <ol class="steps">
-        <li><h3>申込フォームから送信</h3>
-          <p class="muted">会社名・ご連絡先と、御社の仕入基準（必要粗利率・LTV・金利・想定保有期間・
-            出口単価または成約事例）をご入力ください。基準がお決まりでなければ、
-            こちらから質問形式でお伺いします。</p></li>
-        <li><h3>資料をメールに添付して送付</h3>
-          <p class="muted">一般公開された販売図面、ご自身で作成された物件概要、
-            レントロール、登記情報など、<b>利用する権限をお持ちで、個人情報をマスキング済み</b>の資料を。
-            CSVとExcelは自動で読み取れます。PDFは内容を確認のうえ人力で構造化します。</p></li>
-        <li><h3>原則翌営業日までにレポートをお届け</h3>
-          <p class="muted">HTMLファイルでお送りします。ブラウザで開いて印刷すればPDFになります。
-            基準を変えての再計算は、同一案件であれば追加費用なしで1回まで承ります。</p></li>
-      </ol>
+    <div class="head">
+      <div class="eyebrow">FLOW</div>
+      <h2>お渡しいただくもの、お返しするもの。</h2>
+      <p class="sec-lead">お手元の資料と御社の基準をいただければ、判断に使える形にして戻します。</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">01</span>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v4h4M9 12h6M9 16h6" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>販売図面・物件概要</h3>
+        <p>公開されている図面や、御社が作成された概要をお送りください。個人情報はマスキング済みのもののみ。</p></div>
+      <div class="step"><span class="n">02</span>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V9M10 18V5M16 18v-6M22 18h-2" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linecap="round"/><path d="M3 21h18" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>御社の出口・粗利・費用条件</h3>
+        <p>売却想定額、必要粗利率、LTV、金利、保有期間。<b>価格は御社にご指定いただきます。</b></p></div>
+      <div class="step"><span class="n">03</span>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="#1d7f5c" stroke-width="1.8"/><path d="M16 16l5 5M8 11h6M11 8v6" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <h3>仕入上限・必要指値率・リスク整理</h3>
+        <p>条件から逆算した上限額と指値率、問題点と資料不足を切り分けて提示します。</p></div>
+      <div class="step"><span class="n">04</span>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h13M4 12h13M4 18h8" fill="none" stroke="#1d7f5c" stroke-width="1.8" stroke-linecap="round"/><path d="M17 16l2.5 2.5L23 14" fill="none" stroke="#1d7f5c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>確認質問3つ・推奨アクション</h3>
+        <p>仲介会社へそのまま送れる質問と、次に何をすべきかまで書いて納品します。</p></div>
     </div>
   </div>
 </section>
 
+<!-- 前後比較 -->
+<section class="sec-tint" id="pains">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">BEFORE / AFTER</div>
+      <h2>判断が止まる場所を、なくす。</h2>
+    </div>
+    <div class="compare">
+      <div class="col-box before">
+        <h3><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="#54655f" stroke-width="1.6"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#54655f" stroke-width="1.6" stroke-linecap="round"/></svg>今まで</h3>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="#9aaba5"/></svg>公開価格が高いため保留にする</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="#9aaba5"/></svg>担当者ごとに計算方法が違う</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="#9aaba5"/></svg>権利案件は怖くて後回しになる</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="#9aaba5"/></svg>仲介への確認事項がまとまらない</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="#9aaba5"/></svg>社長または役員しか判断できない</li>
+        </ul>
+      </div>
+      <div class="col-box after">
+        <h3><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="none" stroke="#166848" stroke-width="1.6"/><path d="M5 8.2l2.2 2.2L11 6.2" fill="none" stroke="#166848" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>仕入ジャッジAI 利用後</h3>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>買える上限まで逆算する</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>御社の基準で計算を統一する</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>問題点と確認項目を分離する</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>質問3つと推奨アクションを出力する</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>担当者から決裁者へ判断材料を渡せる</li>
+        </ul>
+      </div>
+    </div>
+    <p class="sec-lead" style="margin-top:18px">仕入判断が止まる理由は、多くの場合「情報が足りない」ことではなく「情報を判断に使える形にする時間がない」ことだと考えています。公開価格が高く見える案件でも、御社の基準で逆算すればいくらまで出せるかは決まります。その逆算と、指値が通るかどうかの材料集め、仲介会社へ聞くべきことの整理までを引き受けます。</p>
+    <p class="small" style="margin-top:12px">効果を数値で保証するものではありません。判断に必要な材料を揃えるところまでが当サービスの役割です。</p>
+  </div>
+</section>
+
+<!-- 納品物4分類 -->
+<section id="deliverable">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">DELIVERABLE</div>
+      <h2>1案件につき、この4つをお返しします。</h2>
+      <p class="sec-lead">金額はすべて<b>顧客指定条件</b>からの機械計算です。当サービスが価格を推定することはありません。</p>
+    </div>
+    <div class="cats">
+      <div class="cat"><h3><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18V9M10 18V5M16 18v-8M3 21h18" fill="none" stroke="#1d7f5c" stroke-width="1.9" stroke-linecap="round"/></svg>数字</h3>
+        <ul><li>仕入上限</li><li>必要指値額</li><li>必要指値率</li><li>粗利額・粗利率</li><li>必要自己資金・自己資金効率</li></ul></div>
+      <div class="cat"><h3><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 4 5-8 4 5" fill="none" stroke="#1d7f5c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>出口シナリオ</h3>
+        <ul><li>保守（依頼者入力）</li><li>標準（依頼者入力）</li><li>強気（依頼者入力）</li><li>保有期間別の比較</li></ul></div>
+      <div class="cat"><h3><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 16H3z" fill="none" stroke="#b3261e" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 9v4.5M12 16.4v.2" stroke="#b3261e" stroke-width="2" stroke-linecap="round"/></svg>リスク</h3>
+        <ul><li>問題点の抽出</li><li>致命的リスク・要確認リスク</li><li>資料不足項目</li><li>確認が必要な事項</li></ul></div>
+      <div class="cat"><h3><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h11M13 7l5 5-5 5" fill="none" stroke="#1d7f5c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>次のアクション</h3>
+        <ul><li>仲介会社への質問3つ</li><li>指値が成立する材料</li><li>推奨アクション</li><li>判定と確信度</li></ul></div>
+    </div>
+    <details class="more">
+      <summary>詳細17項目を表示する</summary>
+      <ul class="items">
+        <li>案件概要（種目・取引態様・面積・滞留日数・価格改定）</li>
+        <li>判定（S／A／B／C／D）</li>
+        <li>判定の確信度</li>
+        <li>公開価格</li>
+        <li>依頼者入力の売却想定3水準</li>
+        <li>想定総経費</li>
+        <li>公開価格での粗利</li>
+        <li>仕入上限</li>
+        <li>必要指値額</li>
+        <li>必要指値率</li>
+        <li>必要自己資金</li>
+        <li>年率自己資金効率</li>
+        <li>想定総工数</li>
+        <li>指値が成立する可能性を示す材料</li>
+        <li>問題点・致命的リスク・要確認リスク</li>
+        <li>価値を上げられる要素と前提条件</li>
+        <li>仲介会社への確認質問3つ・推奨アクション</li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+
+<!-- 判定の見方 -->
+<section id="grade">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">GRADE</div>
+      <h2>判定は5段階。理由と根拠を必ず添えます。</h2>
+      <p class="sec-lead">判定だけを見て終わらないよう、そう判断した理由と、次に何をすべきかを併記します。</p>
+    </div>
+    <div class="scroll">
+      <table class="plain">
+        <tr><th>判定</th><th>意味</th><th>そのとき出す材料</th></tr>
+        <tr><td><b>S</b></td><td>公開価格のままで御社の基準を満たす</td><td>買付可否の確認先と、先着状況を聞く質問</td></tr>
+        <tr><td><b>A</b></td><td>合理的な指値や条件確認で案件化できる</td><td>必要指値額と、その指値が通る材料（滞留日数・価格改定履歴・売主事情）</td></tr>
+        <tr><td><b>B</b></td><td>加工・権利調整・出口確認のあとに判断する</td><td>論点ごとの解消可否と、確認に必要な費用の目安</td></tr>
+        <tr><td><b>C</b></td><td>現時点では条件が合わないが、監視する価値がある</td><td>価格がいくらまで下がれば成立するかの水準</td></tr>
+        <tr><td><b>D</b></td><td>致命的リスクがある、または監視の価値がない</td><td>そう判断した具体的な根拠</td></tr>
+      </table>
+    </div>
+    <p class="small" style="margin-top:14px"><b>公開価格で買えないというだけでD判定にはしません。</b>必ず仕入上限と必要指値率を出したうえで、その指値が成立する材料を探します。確信度（高／中／低）も併記し、入力データの充足度と出口根拠の質から機械的に算出します。取引の成否を予測するものではありません。</p>
+  </div>
+</section>
+
+<!-- サンプル -->
+<section class="sec-tint" id="samples">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">SAMPLES</div>
+      <h2>実際の納品物を3件、そのまま公開しています。</h2>
+      <p class="sec-lead">物件データ・会社名はすべて架空です。書式と項目、どこまで数字が出るかをご確認ください。</p>
+    </div>
+    <div class="samples">
+      <a class="scard" href="samples/01_kodate_shichi.html">
+        <div class="shot"><img src="assets/sample_01_kodate_shichi.webp" alt="相続・空家戸建のサンプルレポート。判定S、必要指値率0.0%、境界未確定のリスクを記載。" loading="lazy" width="1400" height="1008"></div>
+        <div class="b">
+          <div class="chips"><span class="chip">相続・空家戸建</span><span class="chip j">判定 S</span></div>
+          <h3>公開価格のままで基準を満たす案件</h3>
+          <dl><dt>必要指値率</dt><dd class="num">0.0%</dd>
+              <dt>主要リスク</dt><dd>境界未確定</dd></dl>
+          <div class="go"><span class="btn btn-sub btn-sm">レポート全体を見る</span></div>
+        </div>
+      </a>
+      <a class="scard" href="samples/02_saikenchiku_fuka.html">
+        <div class="shot"><img src="assets/sample_02_saikenchiku_fuka.webp" alt="再建築不可土地のサンプルレポート。判定B、必要指値率25.7%、再建築不可と私道負担のリスクを記載。" loading="lazy" width="1400" height="1008"></div>
+        <div class="b">
+          <div class="chips"><span class="chip">再建築不可土地</span><span class="chip j">判定 B</span></div>
+          <h3>権利調整と出口確認で成立余地がある案件</h3>
+          <dl><dt>必要指値率</dt><dd class="num">25.7%</dd>
+              <dt>主要リスク</dt><dd>再建築不可・私道負担</dd></dl>
+          <div class="go"><span class="btn btn-sub btn-sm">レポート全体を見る</span></div>
+        </div>
+      </a>
+      <a class="scard" href="samples/03_ittou_shuueki.html">
+        <div class="shot"><img src="assets/sample_03_ittou_shuueki.webp" alt="一棟アパートのサンプルレポート。判定A、必要指値率8.3%、レントロール未取得のリスクを記載。" loading="lazy" width="1400" height="1008"></div>
+        <div class="b">
+          <div class="chips"><span class="chip">一棟アパート</span><span class="chip j">判定 A</span></div>
+          <h3>合理的な指値で案件化できる案件</h3>
+          <dl><dt>必要指値率</dt><dd class="num">8.3%</dd>
+              <dt>主要リスク</dt><dd>レントロール未取得</dd></dl>
+          <div class="go"><span class="btn btn-sub btn-sm">レポート全体を見る</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- 向き不向き -->
+<section class="sec-tint" id="fit">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">FIT</div>
+      <h2>合う会社と、合わない会社があります。</h2>
+      <p class="sec-lead">先に書いておきます。合わないと思われたら、お申し込みいただかないほうがよいです。</p>
+    </div>
+    <div class="compare">
+      <div class="col-box after">
+        <h3>お役に立てる可能性が高い</h3>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>持込や紹介の案件が、判断を待って溜まることがある</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>代表や特定の担当者に一次判断が集中している</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>権利や法令の論点がある案件を扱っている</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>担当者から決裁者へ渡す資料の形を揃えたい</li>
+        </ul>
+      </div>
+      <div class="col-box before">
+        <h3>お役に立てない</h3>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="#54655f" stroke-width="2" stroke-linecap="round"/></svg>物件の適正価格や市場価値を出してほしい場合</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="#54655f" stroke-width="2" stroke-linecap="round"/></svg>鑑定評価書や価格の証明書が必要な場合</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="#54655f" stroke-width="2" stroke-linecap="round"/></svg>現地調査や役所調査まで代行してほしい場合</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="#54655f" stroke-width="2" stroke-linecap="round"/></svg>売却想定額をこちらで決めてほしい場合</li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="#54655f" stroke-width="2" stroke-linecap="round"/></svg>個人のお客様としてご利用になりたい場合</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 入力方式 -->
 <section id="scope">
   <div class="wrap">
-    <div class="head"><div class="eyebrow">お申し込みの前に</div>
-      <h2>この商品でできること、できないこと。</h2></div>
-    <div class="beta-scope">
-      <h3>できないこと（必ずお読みください）</h3>
-      <ul>
-        <li><b>不動産鑑定評価ではありません。</b>不動産鑑定士による鑑定評価書ではなく、その代わりにもなりません。</li>
-        <li><b>法的な判断を提供するものではありません。</b>権利関係・法令適合の最終判断は専門家にご確認ください。</li>
-        <li><b>融資の承認や利益を保証するものではありません。</b></li>
-        <li><b>最終的なご判断は、御社が行うものです。</b>本レポートは判断材料の1つです。</li>
-      </ul>
+    <div class="head">
+      <div class="eyebrow">INPUT</div>
+      <h2>売却想定額は、御社にご指定いただきます。</h2>
+      <p class="sec-lead">当サービスは対象不動産の市場価値や適正価格を判定しません。計算の出発点は、次のいずれか1つの方式でご指定ください。</p>
     </div>
-    <div class="beta-scope">
-      <h3>お預かりできる資料（β版）</h3>
-      <ul>
-        <li>一般に公開された販売図面</li>
-        <li>お客様ご自身が作成された物件概要</li>
-        <li>お客様が利用する権限をお持ちの資料</li>
-        <li>個人情報を削除またはマスキングした資料</li>
-        <li>第三者へお渡しすることに問題がないと、お客様が確認された資料</li>
-      </ul>
-      <p class="muted" style="margin:10px 0 0">会員制サイトから出力されたデータは、β版では対象外です。
-        <b>売主様・お客様の氏名、住所の号数、電話番号などは、マスキングしてからお送りください。</b></p>
+    <div class="scroll">
+      <table class="plain">
+        <tr><th>方式</th><th>ご入力いただく項目</th></tr>
+        <tr><td>方式A</td><td>保守売却想定額／標準売却想定額／強気売却想定額</td></tr>
+        <tr><td>方式B</td><td>標準売却想定額／保守シナリオの下落率／強気シナリオの上昇率</td></tr>
+        <tr><td>方式C</td><td>顧客指定単価／顧客指定期待利回り／顧客指定賃料／顧客指定掛け目</td></tr>
+      </table>
     </div>
-    <div class="beta-scope">
-      <h3>お申し込みの流れ</h3>
-      <ul>
-        <li>フォームからお申し込みいただくと、<b>注文番号</b>を発行します。</li>
-        <li>資料を拝見し、<b>決済の前に</b>受付できるかどうかをご連絡します。</li>
-        <li>資料が足りない場合は、追加でお願いしたいものをご案内します。受付できない場合はお断りします。</li>
-        <li>受付可能とご連絡したあとに、お支払いのご案内をします。</li>
-        <li>計算は<b>御社の仕入基準</b>（必要粗利率・LTV・金利・保有期間・出口単価）で行います。当方の基準は使いません。</li>
-      </ul>
+    <div class="note stop" style="margin-top:16px">
+      <h3>ご入力がない場合</h3>
+      <p>出口価格や仕入上限を推定せず、<b>「売却想定条件未入力のため未算出」</b>としてお返しします。所在地・価格・面積だけで金額を出すことはできません。</p>
     </div>
   </div>
 </section>
 
-<section class="wrap">
-  <div class="head col"><div class="eyebrow">ご入力いただくもの</div>
-    <h2>売却想定額は、御社にご入力いただきます。</h2></div>
-  <p class="muted">当サービスは対象不動産の市場価値や適正価格を判定しません。
-    計算の出発点となる売却想定額は、次の<b>いずれか1つの方式</b>で御社にご指定いただきます。
-    これが<b>顧客指定条件</b>となり、すべての金額はこの条件からの機械計算です。</p>
-  <div class="scroll"><table class="plan-table">
-    <tr><th>方式</th><th>ご入力いただく項目</th></tr>
-    <tr><td>方式A</td><td>保守売却想定額／標準売却想定額／強気売却想定額</td></tr>
-    <tr><td>方式B</td><td>標準売却想定額／保守シナリオの下落率／強気シナリオの上昇率</td></tr>
-    <tr><td>方式C</td><td>顧客指定単価／顧客指定期待利回り／顧客指定賃料／顧客指定掛け目</td></tr>
-  </table></div>
-  <p class="muted"><b>いずれもご入力がない場合は、出口価格や仕入上限を推定せず
-    「売却想定条件未入力のため未算出」としてお返しします。</b>
-    所在地・価格・面積だけで金額を出すことはできません。AIが価格を推測することもありません。</p>
-</section>
-<section id="price">
+
+<!-- 受付から納品まで -->
+<section id="process">
   <div class="wrap">
-    <div class="head"><div class="eyebrow">料金</div>
-      <h2>まずは1案件、4,980円から。</h2></div>
-    <!-- 主商品を1つに絞って見せる。4つ並列にしない。 -->
-    <div class="plan feature lead-plan">
-      <div class="code">まずはこちら</div>
-      <div class="name">初回お試し 仕入収支シミュレーション</div>
-      <div class="price num">4,980<small>円／1案件（税込）</small></div>
-      <ul>
-        <li><b>仕入上限の機械計算</b>（御社入力の必要粗利率・LTV・金利・保有期間から逆算）</li>
-        <li><b>必要指値額と必要指値率</b>（公開価格との差）</li>
-        <li><b>仲介会社への確認質問3つ</b>（そのまま使える文面）</li>
-        <li>依頼者入力の売却想定3水準（保守／標準／強気）によるシナリオ比較</li>
-        <li>納品は<b>受付可能と判断したのち、原則翌営業日まで</b></li>
-      </ul>
-      <a class="btn btn-main" href="order.html?plan=A">1案件 4,980円で申し込む</a>
-      <p class="muted" style="margin:14px 0 0">
-        資料を拝見して受付できないと判断した場合は、<b>決済前に</b>お断りするか、
-        追加でお願いしたい資料をご案内します。先に課金することはありません。</p>
+    <div class="head">
+      <div class="eyebrow">PROCESS</div>
+      <h2>お申し込みから納品まで。</h2>
+      <p class="sec-lead">先に課金することはありません。資料を拝見し、受付できる場合だけお支払いをご案内します。</p>
     </div>
-
-    <details class="more-plans">
-      <summary>継続してお使いになる場合の商品（初回のあとで構いません）</summary>
-      <div class="scroll"><table class="plan-table">
-        <tr><th>商品</th><th>価格（税込）</th><th>対象</th><th>内容</th></tr>
-        <tr><td>仕入判断・収支レポート</td><td>9,800円</td><td>1案件</td>
-            <td>全17項目の詳細レポート。シナリオ比較・指値根拠・論点整理・確認質問</td></tr>
-        <tr><td>7日間 仕入候補選別テスト</td><td>準備中</td><td>—</td>
-            <td>現在お申し込みは受け付けておりません</td></tr>
-        <tr><td>継続仕入判断サポート</td><td>準備中</td><td>—</td>
-            <td>現在お申し込みは受け付けておりません</td></tr>
-      </table></div>
-      <p class="muted"><b>現在ご購入いただけるのは上の2商品のみです。</b>
-          7日間プランと月額プランは、ご利用実績を確認してから開始します。
-          売れていない段階でプランを増やすことはしません。</p>
-    </details>
-
-    <p class="muted" style="margin-top:20px">価格は検証期間中のものです。最初のお客様3社までは上記価格で提供し、
-      ご利用状況をふまえて見直します。値上げする場合は、既存のお客様には事前にご連絡し、
-      継続中の契約には適用しません。</p>
-  </div>
-</section>
-
-<section id="data">
-  <div class="wrap">
-    <div class="head col"><div class="eyebrow">データの取り扱い</div>
-      <h2>お預かりしたデータは、その案件のためだけに使います。</h2></div>
-    <div class="grid g2 col" style="max-width:none">
+    <div class="scroll">
+      <table class="plain">
+        <tr><th>手順</th><th>内容</th><th>費用</th></tr>
+        <tr><td>1. 申込内容の作成</td>
+          <td>申込ページで会社名・ご連絡先・案件の概要・御社の仕入基準・売却想定条件をご入力ください。注文番号が発行されます。</td>
+          <td>—</td></tr>
+        <tr><td>2. メールの送信</td>
+          <td>作成された申込内容をメールでお送りください。<b>メールの送信をもって受付</b>となります。この画面で注文番号を作っただけでは受付になりません。</td>
+          <td>—</td></tr>
+        <tr><td>3. 受付可否のご連絡</td>
+          <td>資料を拝見し、受付できるかをご連絡します。不足があれば追加でお願いしたい資料をご案内します。受付できない場合はその理由をお伝えします。</td>
+          <td>—</td></tr>
+        <tr><td>4. お支払い</td>
+          <td>受付可能とご連絡したのちに、お支払いのご案内をします。</td>
+          <td>4,980円〜</td></tr>
+        <tr><td>5. 納品</td>
+          <td>ご入金の確認後、原則翌営業日までに電子ファイル（HTML）でお送りします。</td>
+          <td>—</td></tr>
+        <tr><td>6. 再計算（初回のみ）</td>
+          <td>売却想定額や必要粗利率を変えた場合の数字を、1回まで出し直します。</td>
+          <td>追加費用なし</td></tr>
+      </table>
+    </div>
+    <div class="grid2" style="margin-top:16px">
       <div class="note">
-        <h3 style="margin-top:0">やること</h3>
-        <p class="muted" style="margin:0">お客様ごとに隔離した領域で処理し、他のお客様のデータや
-          当社の基準値と混ぜません。処理後のデータは、ご依頼がなければ90日を目安に削除します。
-            削除のご請求は随時お受けし、対応後にご連絡します。</p>
+        <h3>資料が足りない場合</h3>
+        <p>推定で埋めることはしません。読み取れなかった項目は「未取得」と明記し、その項目があると精度がどう変わるかを書き添えます。追加資料をいただければ、その分を反映して出し直します。</p>
+      </div>
+      <div class="note">
+        <h3>受付できない場合</h3>
+        <p>判断に必要な項目が読み取れないとき、資料の利用権限が確認できないとき、当方の対応範囲を超えると判断したときはお断りします。いずれも決済の前にご連絡しますので、費用は発生しません。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 料金 -->
+<section class="sec-tint" id="price">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">PRICING</div>
+      <h2>まずは1案件、4,980円から。</h2>
+      <p class="sec-lead">販売しているのは次の2つだけです。資料を拝見して受付できないと判断した場合は、決済の前にお断りします。</p>
+    </div>
+    <div class="plans">
+      <div class="plan lead">
+        <span class="ribbon">まずはこちら</span>
+        <div class="pname">初回お試し 仕入収支シミュレーション</div>
+        <div class="pprice num">4,980<small>円／1案件（税込）</small></div>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>最初の1案件だけでお試しいただけます</li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>継続契約は不要です</li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>受付可否を確認してから決済します</li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>条件を変えての再計算を1回まで承ります</li>
+          <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>ご入金の確認後、原則翌営業日までに納品</li>
+        </ul>
+        <a class="btn btn-main" href="order.html?plan=A">1案件 4,980円で申し込む</a>
+        <p class="small" style="margin-top:12px">先に課金することはありません。</p>
+      </div>
+      <div>
+        <div class="plan">
+          <div class="pname">仕入判断・収支レポート</div>
+          <div class="pprice num">9,800<small>円／1案件（税込）</small></div>
+          <ul>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>全17項目の詳細レポート</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>シナリオ比較・指値根拠・論点整理</li>
+            <li><svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8.4l3.4 3.4L13.5 4.2" fill="none" stroke="#1d7f5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>初回のあとで必要な場合だけ</li>
+          </ul>
+          <a class="btn btn-sub" href="order.html?plan=B">この内容で申し込む</a>
+          <div class="soon">7日間 仕入候補選別テスト／継続仕入判断サポートは<b>準備中</b>です。現在お申し込みは受け付けておりません。売れていない段階でプランを増やすことはしません。</div>
+        </div>
+        <div class="note" style="margin-top:14px">
+          <h3>迷われたら、先にサンプルを</h3>
+          <p>申し込む前に、実際の納品物3件をご覧いただけます。<br>
+            <a href="#samples">匿名サンプルを見る →</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="scroll" style="margin-top:22px">
+      <table class="plain">
+        <tr><th>比較</th><th>初回お試し 4,980円</th><th>仕入判断・収支レポート 9,800円</th></tr>
+        <tr><td>仕入上限・必要指値額・必要指値率</td><td>あり</td><td>あり</td></tr>
+        <tr><td>粗利額・粗利率・必要自己資金・自己資金効率</td><td>あり</td><td>あり</td></tr>
+        <tr><td>出口シナリオ（依頼者入力の3水準）</td><td>あり</td><td>あり</td></tr>
+        <tr><td>仲介会社への確認質問3つ</td><td>あり</td><td>あり</td></tr>
+        <tr><td>問題点・致命的リスク・資料不足の切り分け</td><td>要点のみ</td><td>全項目</td></tr>
+        <tr><td>価値を上げられる要素と、その前提条件</td><td>—</td><td>あり</td></tr>
+        <tr><td>保有期間別の比較</td><td>—</td><td>あり</td></tr>
+        <tr><td>条件を変えての再計算</td><td>1回まで</td><td>都度ご相談</td></tr>
+        <tr><td>対象</td><td>初めての1案件</td><td>2案件目以降、または論点の多い案件</td></tr>
+      </table>
+    </div>
+    <p class="small" style="margin-top:18px">価格は検証期間中のものです。最初のお客様3社までは上記価格で提供し、ご利用状況をふまえて見直します。値上げする場合は既存のお客様に事前にご連絡し、継続中のご依頼には適用しません。</p>
+  </div>
+</section>
+
+
+<!-- データの扱い -->
+<section class="sec-tint" id="data">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">DATA</div>
+      <h2>お預かりしたデータは、その案件のためだけに使います。</h2>
+    </div>
+    <div class="grid2">
+      <div class="note">
+        <h3>やること</h3>
+        <p>お客様ごとに分けて処理し、他のお客様のデータや当方の基準値と混ぜません。計算に使うのは、御社からいただいた条件だけです。処理後のデータは、ご依頼がなければ90日を目安に削除します。削除のご請求は随時お受けし、対応後にご連絡します。</p>
       </div>
       <div class="note stop">
-        <h3 style="margin-top:0">やらないこと</h3>
-        <p class="muted" style="margin:0">会員制サイトへの自動ログイン、アクセス制限の回避、
-          無断のスクレイピングは行いません。<b>β版では、会員制サイトから出力されたデータはお預かりしません。</b>
-          お預かりしたデータを他社への提案、統計・学習データ、第三者提供に使うこともありません。</p>
+        <h3>やらないこと</h3>
+        <p>お預かりした資料を他のお客様の案件に使うことはしません。第三者のデータベースへ自動でアクセスして情報を取得することもしません。納品物に含まれるのは、御社からいただいた資料と条件から導いた内容だけです。</p>
       </div>
     </div>
+    <p class="small" style="margin-top:14px">個人情報の取扱いの詳細は <a href="legal.html">利用規約・プライバシーポリシー</a> をご覧ください。</p>
   </div>
 </section>
 
-<section id="faq">
+<!-- 信頼 -->
+<section class="sec-deep" id="trust">
   <div class="wrap">
-    <div class="head col"><div class="eyebrow">よくあるご質問</div><h2>ご不明点</h2></div>
-    <div class="col">
-      <details><summary>不動産鑑定評価書として使えますか</summary>
-        <div class="body"><p>使えません。本サービスは不動産鑑定評価書でも、宅地建物取引業法上の
-          価格査定書でもありません。買取再販事業者様の仕入判断支援のための情報提供資料です。
-          金融機関への提出や対外的な価格の根拠資料としてはご利用いただけません。</p></div></details>
-      <details><summary>どんなデータを送ればいいですか</summary>
-        <div class="body"><p>物件概要書、販売図面、ご自身で出力されたCSV／Excel、レントロール、
-          登記情報など、お手元にあるものをそのままお送りください。CSVとExcelは自動で読み取ります。
-          最低限、価格・所在地・種目・面積があれば計算できます。不足があれば、
-          何を確認すれば精度が上がるかをレポートに明記します。</p></div></details>
-      <details><summary>出口価格はどうやって決めていますか</summary>
-        <div class="body"><p>優先順に、(1)御社からご提供いただいた成約事例、(2)御社がご指定のエリア㎡単価、
-          (3)収益物件の場合は期待利回りによる収益還元、で算出します。
-          いずれもご提供がない場合は金額を出さず、「未算出」と明記します。
-          相場観で数字を埋めることはしません。</p></div></details>
-      <details><summary>精度はどのくらいですか</summary>
-        <div class="body"><p>各案件に「判定の確信度」を高・中・低で必ず付けています。これは入力データの充足度と
-          出口根拠の質から機械的に算出した指標で、取引の成否を予測するものではありません。
-          現時点で当社は成約実績に基づく確率の較正を行っていないため、
-          成約確率は初期値であり順位づけの目安としてのみご覧ください。この点は隠さず記載しています。</p></div></details>
-      <details><summary>納品はどのくらいかかりますか</summary>
-        <div class="body"><p>CSV／Excelでいただいた場合、原則原則翌営業日までです。PDFや紙資料のみの場合は、
-          人力での構造化が必要なため48時間程度いただくことがあります。
-          期限に間に合わない見込みが立った時点で、ご連絡のうえ返金いたします。</p></div></details>
-      <details><summary>返金はできますか</summary>
-        <div class="body"><p>納品前であれば全額返金します。納品後も、レポートに記載した計算根拠に
-          明らかな誤りがあった場合は、再計算のうえ、ご希望であれば全額返金します。
-          「判定が期待と違った」という理由での返金には応じかねます。</p></div></details>
-      <details><summary>会社の物件情報を渡すことに不安があります</summary>
-        <div class="body"><p>お客様ごとに隔離した領域で処理し、他のお客様のデータや当社の基準値と混ぜません。
-          第三者提供、統計・学習データへの利用は行いません。処理後90日で削除し、
-          それ以前でも削除のご請求を随時お受けし、対応後にご連絡します。秘密保持契約については、内容を拝見したうえで個別にご相談させてください。</p></div></details>
-      <details><summary>継続利用のプランはありますか</summary>
-        <div class="body"><p>月額プラン（PLAN D）をご用意していますが、まずは1案件（PLAN A／B）または
-          7日間テスト（PLAN C）でお試しいただくことをおすすめします。
-          実際にお役に立てるか確認いただいてからで結構です。</p></div></details>
+    <div class="head">
+      <div class="eyebrow">ABOUT</div>
+      <h2>実績はまだありません。だから、やり方を先に出します。</h2>
+      <p class="sec-lead">他社の事例も、利用者の評価も載せていません。掲載できる事実だけをここに書きます。</p>
+    </div>
+    <div class="trust-grid">
+      <div class="tcard"><h3>不動産実務を前提に設計</h3>
+        <p>仕入判断で実際に必要になる項目から逆算して作っています。汎用の計算ツールではありません。</p></div>
+      <div class="tcard"><h3>不明な数値を勝手に埋めない</h3>
+        <p>資料にない項目は推定せず、未取得と明記します。確信度も併記します。</p></div>
+      <div class="tcard"><h3>顧客指定条件で計算</h3>
+        <p>売却想定額も粗利基準も御社のものを使います。当方の基準値は混ぜません。</p></div>
+      <div class="tcard"><h3>受付可能の確認後に決済</h3>
+        <p>資料を拝見し、受付できる場合だけお支払いをご案内します。先に課金しません。</p></div>
+      <div class="tcard"><h3>お預かりする資料の範囲</h3>
+        <p>個人情報をマスキング済みの資料のみお預かりします。会員制サイト由来のデータはβ版では対象外です。</p></div>
+      <div class="tcard"><h3>保証しないこと</h3>
+        <p>利益・売却・融資のいずれも保証しません。不動産鑑定評価でも法的判断でもありません。</p></div>
+    </div>
+    <div class="operator">
+      <h3>運営</h3>
+      <dl>
+        <dt>販売事業者</dt><dd>株式会社ライフサポート</dd>
+        <dt>運営責任者</dt><dd>宮永 浩平</dd>
+        <dt>連絡先</dt><dd>miyanaga@lsup.jp</dd>
+        <dt>対象</dt><dd>法人・宅地建物取引業者・不動産買取再販事業者・不動産仲介／管理会社など、営業のため又は営業として利用する事業者</dd>
+      </dl>
     </div>
   </div>
 </section>
 
+<!-- 重要事項 -->
 <section id="legal">
-  <div class="wrap col">
-    <div class="head"><div class="eyebrow">規約</div><h2>利用規約・プライバシー・免責事項</h2></div>
-    <div class="legal">
-      <details><summary>利用規約</summary>
-        <div class="body">
-          <ol>
-            <li><b>適用</b>／本規約は、当方が提供する「仕入ジャッジAI」（以下「本サービス」）の
-              利用条件を定めるものです。お客様は、お申込みをもって本規約に同意したものとします。</li>
-            <li><b>サービス内容</b>／お客様からご提供いただいた資料をもとに、
-              一次仕入判断を支援するレポートを作成し納品します。
-              本サービスは不動産鑑定評価、価格査定、投資助言、法律相談のいずれでもありません。</li>
-            <li><b>お客様の責任</b>／お客様は、ご提供いただく資料について、
-              正当に取得し当方に処理させる権限を有することを保証するものとします。
-              第三者の権利を侵害する資料、取得元の規約に反して収集された資料は送付しないでください。</li>
-            <li><b>禁止事項</b>／レポートの再販売、当方の許諾なく第三者へ提供すること、
-              本サービスを不動産鑑定評価書または価格査定書として表示することを禁じます。</li>
-            <li><b>料金・支払</b>／料金は申込時に表示する金額とし、決済完了後に作業を開始します。</li>
-            <li><b>納品</b>／原則としてお支払い確認から原則翌営業日までに、
-              電子ファイル（HTML）をメールでお送りします。</li>
-            <li><b>返金</b>／納品前のキャンセルは全額返金します。
-              納品後も、計算根拠に明らかな誤りがあった場合は再計算または全額返金に応じます。
-              判定内容に対するご不満のみを理由とする返金には応じません。</li>
-            <li><b>解約</b>／月額プランはいつでも解約できます。日割り返金は行いません。</li>
-            <li><b>変更</b>／本規約および料金は変更することがあります。
-              変更する場合は事前に通知し、継続中の契約には従前の条件を適用します。</li>
-            <li><b>準拠法・管轄</b>／本規約は日本法に準拠し、
-              紛争は当方所在地を管轄する裁判所を第一審の専属的合意管轄とします。</li>
-          </ol>
-        </div></details>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">IMPORTANT</div>
+      <h2>お申し込みの前に、これだけはお読みください。</h2>
+    </div>
+    <div class="grid2">
+      <div class="note stop">
+        <h3>できないこと</h3>
+        <p>本サービスは<b>不動産鑑定評価ではありません</b>。<b>法的な判断を提供するものではありません</b>。<b>融資の承認や利益を保証するものではありません</b>。物件の現地調査・役所調査は行いません。<b>最終的なご判断は、御社が行う</b>ものです。</p>
+      </div>
+      <div class="note warn">
+        <h3>お預かりする資料</h3>
+        <p>一般に公開された販売図面、御社が作成された物件概要、御社が利用する権限をお持ちの資料に限ります。売主様・お客様の氏名、住所の号数、電話番号は<b>マスキング</b>してからお送りください。会員制サイトから出力されたデータは、β版では対象外です。</p>
+      </div>
+      <div class="note">
+        <h3>計算の前提</h3>
+        <p>金額はすべて<b>御社の仕入基準</b>（必要粗利率・LTV・金利・保有期間・売却想定額）からの機械計算です。当サービスが対象不動産の市場価値や適正価格を判定するものではありません。</p>
+      </div>
+      <div class="note">
+        <h3>返金の基本方針</h3>
+        <p>着手前のキャンセルは全額返金します。当方の原因で納品できない場合、および納品物に事実の誤りがあり再作成でも解消しない場合も全額返金します。それ以外の役務提供後の返金はお受けできません。</p>
+      </div>
+    </div>
+    <p class="small" style="margin-top:16px">利用規約・プライバシーポリシー・免責事項・特定商取引法に基づく表記の全文は <a href="legal.html">こちら</a> をご覧ください。</p>
+  </div>
+</section>
 
-      <details><summary>プライバシーポリシー</summary>
-        <div class="body">
-          <ol>
-            <li><b>取得する情報</b>／会社名、ご担当者名、メールアドレス、電話番号、
-              お客様が送付される物件資料および仕入基準。</li>
-            <li><b>利用目的</b>／レポートの作成と納品、ご連絡、料金の請求、
-              品質改善のための社内での不具合分析。これ以外の目的には利用しません。</li>
-            <li><b>第三者提供</b>／法令に基づく場合を除き、第三者に提供しません。
-              お預かりした物件資料を、他のお客様への提案、統計データ、
-              機械学習の学習データに用いることはありません。</li>
-            <li><b>外部サービス</b>／決済処理のため決済代行事業者を利用します。
-              クレジットカード情報は当方では保持しません。</li>
-            <li><b>保存期間</b>／お預かりした資料および生成したレポートは、
-              納品から90日で削除します。ご請求があれば即時に削除します。</li>
-            <li><b>安全管理</b>／お客様ごとに隔離した領域で処理し、
-              他のお客様のデータと混在させません。</li>
-            <li><b>開示・訂正・削除</b>／ご本人からのご請求に応じて対応します。</li>
-            <li><b>お問い合わせ</b>／本ポリシーに関するご連絡は、申込フォーム記載の連絡先まで。</li>
-          </ol>
-        </div></details>
+<!-- FAQ -->
+<section class="sec-tint" id="faq">
+  <div class="wrap">
+    <div class="head"><div class="eyebrow">FAQ</div><h2>よくあるご質問</h2></div>
+    <details class="faq"><summary>資料は何を送ればよいですか</summary>
+      <p>販売図面1枚から承ります。加えて、御社の売却想定額・必要粗利率・LTV・金利・保有期間をお知らせください。不足があれば、決済の前に追加でお願いする資料をご案内します。</p></details>
+    <details class="faq"><summary>価格はそちらで算定してくれるのですか</summary>
+      <p>いいえ。売却想定額は御社にご指定いただきます。ご指定がない場合は「売却想定条件未入力のため未算出」としてお返しします。当サービスが価格を推測することはありません。</p></details>
+    <details class="faq"><summary>どのくらいで返ってきますか</summary>
+      <p>ご入金の確認後、原則翌営業日までにお送りします。資料に不足がある場合は、その旨を先にご連絡します。</p></details>
+    <details class="faq"><summary>個人でも使えますか</summary>
+      <p>法人・事業者専用のサービスです。個人消費者の方からのお申し込みはお受けしておりません。</p></details>
+    <details class="faq"><summary>データはどう扱われますか</summary>
+      <p>お客様ごとに分けて処理し、他のお客様のデータや当方の基準値と混ぜません。処理後のデータはご依頼がなければ90日を目安に削除します。削除のご請求は随時お受けし、対応後にご連絡します。</p></details>
+    <details class="faq"><summary>この計算は自社でもできます</summary>
+      <p>そのとおりだと思います。計算式そのものは難しいものではありません。お引き受けするのは、資料から必要な項目を拾い、御社の基準に当てはめ、確認すべき点を書き出すまでの<b>手を動かす時間</b>です。判断そのものは御社が行うものです。</p></details>
+    <details class="faq"><summary>精度はどの程度ですか</summary>
+      <p>入力された条件に対する計算という意味では、確定的なコードで処理しており、同じ入力なら同じ結果になります。ただし出力の確からしさは、いただいた資料の充足度に左右されます。そのため各案件に確信度（高／中／低）を併記し、どの項目が不足しているかを明記します。取引の成否を予測するものではありません。</p></details>
+    <details class="faq"><summary>受付を断られることはありますか</summary>
+      <p>あります。資料から判断に必要な項目が読み取れない場合、権限の確認が取れない資料の場合、当方の対応範囲を超えると判断した場合はお断りします。いずれも<b>決済の前に</b>ご連絡しますので、費用は発生しません。追加でお願いしたい資料がある場合は、その内容をご案内します。</p></details>
+    <details class="faq"><summary>会員制サイトのデータが対象外なのはなぜですか</summary>
+      <p>各サービスの利用規約で、出力データの第三者提供や目的外利用が制限されている場合があるためです。β版では、御社が正当に取得され、第三者へ提供することに問題がない資料に限らせていただいています。</p></details>
+    <details class="faq"><summary>条件を変えて計算し直せますか</summary>
+      <p>初回お試しには、条件を変えての再計算を1回まで含んでいます。売却想定額や必要粗利率を変えた場合の数字を見比べていただけます。2回目以降は別途ご相談ください。</p></details>
+    <details class="faq"><summary>納品物の形式は何ですか</summary>
+      <p>電子ファイル（HTML）でお送りします。ブラウザで開いて印刷やPDF保存ができます。専用のソフトやアカウント作成は不要です。サンプル3件と同じ形式です。</p></details>
+    <details class="faq"><summary>実績を教えてください</summary>
+      <p>まだありません。取引件数や利用者の評価も掲載していません。だからこそ1案件4,980円でお試しいただける形にしています。</p></details>
+  </div>
+</section>
 
-      <details><summary>免責事項</summary>
-        <div class="body">
-          <p>本サービスが提供するレポートは、<b>不動産鑑定評価書ではありません。</b>
-            不動産の鑑定評価に関する法律に基づく鑑定評価書、および宅地建物取引業法上の
-            価格査定書として作成されたものではなく、買取再販事業者様の仕入判断支援のための目的の情報提供資料です。</p>
-          <p>レポート記載の金額は、お客様からご提供いただいた条件およびデータに基づく
-            機械的な計算結果であり、成約価格、売却価格、利益、
-            取引の成立を保証するものではありません。</p>
-          <p>最終的な取得判断、現地調査、役所調査、法令適合性の確認、
-            契約締結の可否は、お客様ご自身の責任において行ってください。
-            本レポートの利用によりお客様に生じた損害について、
-            当方は故意または重過失がある場合を除き責任を負いません。
-            責任を負う場合であっても、賠償額は当該案件についてお支払いいただいた
-            料金の額を上限とします。</p>
-          <p>本サービスは、会員制サイトへの自動ログイン、アクセス制限の回避、
-            無断のスクレイピングを行いません。β版では、会員制サイトから出力されたデータは
-            お預かりしません。お客様が利用する権限をお持ちで、個人情報をマスキング済みの資料のみを処理します。</p>
-        </div></details>
+<!-- 最終CTA -->
+<section class="final">
+  <div class="wrap">
+    <h2>まず、サンプルを1件ご覧ください。</h2>
+    <p>実際の納品物を3件、そのまま公開しています。合わなければ、それで終わりにしていただいて構いません。</p>
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-main" href="#samples">匿名サンプルを見る</a>
+      <a class="btn btn-ghost" href="order.html?plan=A">1案件 4,980円で試す</a>
     </div>
   </div>
 </section>
+
 </main>
 
 <footer>
   <div class="wrap">
     <div>
       <div class="logo" style="font-size:16px">仕入ジャッジAI<span>SHIIRE JUDGE</span></div>
-      <p style="margin:8px 0 0">仕入収支シミュレーション（法人・事業者専用）</p>
+      <p style="margin:8px 0 0" class="muted">仕入収支シミュレーション（法人・事業者専用）</p>
     </div>
     <div style="text-align:right">
       <!-- SELLER:START --><p style="margin:0">販売事業者：株式会社ライフサポート ／ 運営責任者：宮永 浩平 ／ miyanaga@lsup.jp ／ <a href="legal.html#tokusho">特定商取引法に基づく表記</a></p><!-- SELLER:END -->
-      <p style="margin:8px 0 0"><a href="order.html">お申し込み・お問い合わせ</a></p>
+      <p style="margin:8px 0 0"><a href="order.html">お申し込み・お問い合わせ</a>　<a href="legal.html">利用規約・免責・個人情報の取扱い</a></p>
     </div>
   </div>
 </footer>
+
+<div class="mcta">
+  <a class="btn btn-sub" href="#samples">匿名サンプル</a>
+  <a class="btn btn-main" href="order.html?plan=A">4,980円で試す</a>
+</div>
+
+</body>
+</html>

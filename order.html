@@ -11,11 +11,6 @@
   --mincho:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"MS PMincho",serif;
   --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;
 }
-@media(prefers-color-scheme:dark){:root{
-  --paper:#0d1417; --card:#141d21; --ink:#e8eeeb; --ink-2:#c3d0cb;
-  --slate:#8fa3a8; --rule:#28363b; --rule-2:#1d282c;
-  --accent:#4fbf93; --accent-soft:#12291f; --accent-ink:#8fe0bd;
-  --alert:#e08472; --alert-soft:#2a1a17;}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--gothic);
   line-height:1.8;font-size:15.5px;-webkit-text-size-adjust:100%}
@@ -59,6 +54,7 @@ pre{white-space:pre-wrap;word-break:break-all;background:var(--card);border:1px 
 footer{border-top:1px solid var(--rule);margin-top:48px;padding:22px 0 46px;color:var(--slate);font-size:13px}
 footer a{margin-right:14px}
 .err{color:var(--alert);font-size:13px;margin-top:8px}
+/* βはライトテーマ固定。OS設定による自動切り替えは行わない。 */
 </style></head><body>
 <header><div class="wrap"><b>仕入ジャッジAI</b>
 <span class="muted">物件資料から、買える上限と必要指値率を</span>

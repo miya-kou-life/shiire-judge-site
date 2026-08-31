@@ -5,15 +5,10 @@
 
 <style>
 :root{--paper:#f7f8f6;--card:#fff;--ink:#101a1f;--ink-2:#31434b;--slate:#61737a;
-  --rule:#d9e0dc;--accent:#0b6b4f;--accent-ink:#074a37;
+  --rule:#d9e0dc;--rule-2:#f0f4f2;--accent:#0b6b4f;--accent-ink:#074a37;
   --mincho:"Hiragino Mincho ProN","Yu Mincho",YuMincho,serif;
   --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,Meiryo,system-ui,sans-serif;}
-@media (prefers-color-scheme:dark){:root{--paper:#0d1417;--card:#141d21;--ink:#e8eeeb;
-  --ink-2:#c3d0cb;--slate:#8fa3a8;--rule:#28363b;--accent:#4fbf93;--accent-ink:#8fe0bd;}}
-:root[data-theme="dark"]{--paper:#0d1417;--card:#141d21;--ink:#e8eeeb;--ink-2:#c3d0cb;
-  --slate:#8fa3a8;--rule:#28363b;--accent:#4fbf93;--accent-ink:#8fe0bd;}
-:root[data-theme="light"]{--paper:#f7f8f6;--card:#fff;--ink:#101a1f;--ink-2:#31434b;
-  --slate:#61737a;--rule:#d9e0dc;--accent:#0b6b4f;--accent-ink:#074a37;}
+/* βはライトテーマ固定。OS設定による自動切り替えは行わない。 */
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--gothic);
   font-size:15.5px;line-height:1.85}
@@ -41,6 +36,7 @@ table.tokusho th,table.tokusho td{border:1px solid var(--rule);padding:8px 10px;
   text-align:left;vertical-align:top}
 table.tokusho th{background:var(--rule-2);white-space:nowrap;font-weight:600}
 .scroll{overflow-x:auto}
+/* βはライトテーマ固定。OS設定による自動切り替えは行わない。 */
 </style>
 
 <header><div class="wrap">
